@@ -9,15 +9,21 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {Avatar, List, ListItem} from "material-ui";
 
 import About from "./About"
 import Setting from "./Setting"
 import { Provider } from 'react-redux'
+import {indigo500, indigo700} from "material-ui/styles/colors";
 
-const muiTheme = getMuiTheme(lightBaseTheme);
+const muiTheme = getMuiTheme({
+    palette: {
+        primary1Color: indigo500,
+        primary2Color: indigo700,
+        pickerHeaderColor: indigo500,
+    }
+});
 const App = ({ store, app, actions }) => (
     <MuiThemeProvider muiTheme={muiTheme}>
         <div>
