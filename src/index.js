@@ -1,33 +1,19 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter as Router, Route } from 'react-router-dom';
+import {render} from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom'
 import injectTapEventPlugin from 'react-tap-event-plugin';
+
+import configureStore from './store/configureStore'
 import App from './App';
-// import thunkMiddleware from 'redux-thunk';
-// import loggerMiddleware from 'redux-logger';
-// import { createStore, applyMiddleware } from 'redux';
 
 injectTapEventPlugin();
 
-// const createStoreWithMiddleware = applyMiddleware(
-//     thunkMiddleware, // 함수를 dispatch() 하게 해줍니다
-//     loggerMiddleware // 액션을 로깅하는 깔끔한 미들웨어입니다
-// )(createStore);
+const store = configureStore();
 
-// const store = createStoreWithMiddleware(AppReducer);
-
-const About = () => (
-    <div>
-        <h2>About</h2>
-    </div>
-);
-
-ReactDOM.render(
+render(
     <Router>
-        <div>
-            <Route exact path="/" component={App}/>
-            <Route path="/about" component={About}/>
-        </div>
+        <App store={store}/>
     </Router>,
     document.getElementById('root')
 );
+
