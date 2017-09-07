@@ -25,17 +25,19 @@ class Setting extends React.PureComponent {
                             onChange={actions.updateToken}
                         />
                         <RaisedButton
-                            label="Update"
+                            label="Login"
                             primary
-                            onMouseDown={actions.requestLogin}
+                            onMouseDown={e => {
+                                actions.requestLogin(setting.token)
+                            }}
                             style={{marginLeft:"20px"}}
                         />
                     </ListItem>
                 </List>
-                <Snackbar
-                    open={setting.request.done}
-                    message={setting.request.message || ""}
-                />
+                {/*<Snackbar*/}
+                    {/*open={setting.request.done}*/}
+                    {/*message={setting.request.message || ""}*/}
+                {/*/>*/}
             </div>
         );
     }

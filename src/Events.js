@@ -4,16 +4,16 @@ import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import * as actions from './actions';
 
-class Event extends React.PureComponent {
+class Events extends React.PureComponent {
     componentWillMount() {
         const { actions } = this.props;
-        actions.changeAppMenu("Event")
+        actions.changeAppMenu("Events")
     }
 
     render() {
         return (
             <div>
-                <h2>Event</h2>
+                <h2>Events</h2>
             </div>
         );
     }
@@ -25,4 +25,4 @@ const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(actions, dispatch)
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Event));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Events));

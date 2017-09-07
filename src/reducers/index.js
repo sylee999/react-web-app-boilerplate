@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import {CHANGE_APP_MENU, REQUEST_LOGIN, OPEN_APP_DRAWER, UPDATE_TOKEN} from '../actions';
+import {CHANGE_APP_MENU, REQUEST_SESSION, OPEN_APP_DRAWER, UPDATE_TOKEN, RECEIVE_SESSION} from '../actions';
 
 const app = (state = { menu: "", drawer: false }, action) => {
     switch (action.type) {
@@ -18,18 +18,19 @@ const app = (state = { menu: "", drawer: false }, action) => {
     }
 };
 
-const setting = (state = { token: "", request: {done:false}}, action) => {
+const setting = (state = { token: localStorage.token }, action) => {
     switch (action.type) {
         case UPDATE_TOKEN:
             return {
                 ...state,
                 token: action.token
             };
-        case REQUEST_LOGIN:
+        case RECEIVE_SESSION:
             return {
                 ...state,
-                request: action.request
+                session: action.session
             };
+        case REQUEST_SESSION:
         default:
             return state;
     }

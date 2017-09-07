@@ -12,7 +12,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {Avatar, List, ListItem} from "material-ui";
 
-import Event from "./Event"
+import Events from "./Events"
 import Setting from "./Setting"
 import { Provider } from 'react-redux'
 import {indigo500, indigo700} from "material-ui/styles/colors";
@@ -24,56 +24,86 @@ const muiTheme = getMuiTheme({
         pickerHeaderColor: indigo500,
     }
 });
-const App = ({ store, app, actions }) => (
-    <MuiThemeProvider muiTheme={muiTheme}>
-        <div>
-            <AppBar
-                title={app.menu || "Home"}
-                onLeftIconButtonTouchTap={
-                    () => actions.openAppDrawer(!app.drawer)
-                }
-            />
-            <Drawer
-                docked={false}
-                open={app.drawer}
-                onRequestChange={(open) => actions.openAppDrawer(open)}
-            >
-                <List style={{
-                    padding: 0,
-                    backgroundColor: muiTheme.palette.primary1Color,
-                }}>
-                    <ListItem
-                        leftAvatar={<Avatar src="images/guest.png"/>}
-                        disabled
-                    />
-                    <ListItem
-                        primaryText={
-                            <div style={{color: muiTheme.palette.alternateTextColor}}>Primary Text</div>
-                        }
-                        secondaryText={
-                            <span style={{color: muiTheme.palette.accent2Color}}>secondary text</span>
-                        }
-                        disabled
-                    />
-                </List>
-                <List>
-                    <MenuItem onClick={() => actions.openAppDrawer(false)} containerElement={<Link to='/event'/>} primaryText="Event"/>
-                    <MenuItem onClick={() => actions.openAppDrawer(false)} containerElement={<Link to='/setting'/>} primaryText="Setting"/>
-                </List>
-            </Drawer>
-            <Provider store={store}>
+
+class App extends React.Component {
+    componentWillMount() {
+        const { actions } = this.props;
+        actions.requestLogin();
+    }
+
+    render() {
+        const { store, app, setting, actions } = this.props;
+        let user = {
+            avatar_url: 'images/guest.png',
+            name: 'Guest',
+            login: 'unknown',
+            url: '',
+        };
+        if (setting.session) {
+            user = {
+                avatar_url: setting.session.avatar_url,
+                name: setting.session.name,
+                login: setting.session.login,
+                url: setting.session.html_url,
+            };
+        }
+        return (
+            <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <Route exact path="/" component={Event}/>
-                    <Route path="/event" component={Event}/>
-                    <Route path="/setting" component={Setting}/>
+                    <AppBar
+                        title={app.menu || "Home"}
+                        onLeftIconButtonTouchTap={
+                            () => actions.openAppDrawer(!app.drawer)
+                        }
+                    />
+                    <Drawer
+                        docked={false}
+                        open={app.drawer}
+                        onRequestChange={(open) => actions.openAppDrawer(open)}
+                    >
+                        <List style={{
+                            backgroundColor: muiTheme.palette.primary1Color,
+                        }}>
+                            <ListItem
+                                style={{
+                                    height: 40
+                                }}
+                                leftAvatar={<Avatar size="60" src={user.avatar_url}/>}
+                                disabled
+                            />
+                            <ListItem
+                                primaryText={
+                                    <div style={{color: muiTheme.palette.alternateTextColor}}>{user.name}</div>
+                                }
+                                secondaryText={
+                                    <span style={{color: muiTheme.palette.accent2Color}}>{user.login}</span>
+                                }
+                                disabled
+                            />
+                        </List>
+                        <List>
+                            <MenuItem onClick={() => actions.openAppDrawer(false)}
+                                      containerElement={<Link to='/event'/>} primaryText="Events"/>
+                            <MenuItem onClick={() => actions.openAppDrawer(false)}
+                                      containerElement={<Link to='/setting'/>} primaryText="Setting"/>
+                        </List>
+                    </Drawer>
+                    <Provider store={store}>
+                        <div>
+                            <Route exact path="/" component={Events}/>
+                            <Route path="/event" component={Events}/>
+                            <Route path="/setting" component={Setting}/>
+                        </div>
+                    </Provider>
                 </div>
-            </Provider>
-        </div>
-    </MuiThemeProvider>
-);
+            </MuiThemeProvider>
+        );
+    }
+}
 
 const mapStateToProps = (state, ownProps) => ({
-    app: state.app
+    app: state.app,
+    setting: state.setting
 });
 
 const mapDispatchToProps = dispatch => ({
