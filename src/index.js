@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import configureStore from './store/configureStore'

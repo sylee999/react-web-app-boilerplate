@@ -12,7 +12,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {Avatar, List, ListItem} from "material-ui";
 
-import About from "./About"
+import Event from "./Event"
 import Setting from "./Setting"
 import { Provider } from 'react-redux'
 import {indigo500, indigo700} from "material-ui/styles/colors";
@@ -28,7 +28,7 @@ const App = ({ store, app, actions }) => (
     <MuiThemeProvider muiTheme={muiTheme}>
         <div>
             <AppBar
-                title={app.menu || "About"}
+                title={app.menu || "Home"}
                 onLeftIconButtonTouchTap={
                     () => actions.openAppDrawer(!app.drawer)
                 }
@@ -57,14 +57,14 @@ const App = ({ store, app, actions }) => (
                     />
                 </List>
                 <List>
-                    <MenuItem onClick={() => actions.openAppDrawer(false)} containerElement={<Link to='/about'/>} primaryText="About"/>
+                    <MenuItem onClick={() => actions.openAppDrawer(false)} containerElement={<Link to='/event'/>} primaryText="Event"/>
                     <MenuItem onClick={() => actions.openAppDrawer(false)} containerElement={<Link to='/setting'/>} primaryText="Setting"/>
                 </List>
             </Drawer>
             <Provider store={store}>
                 <div>
-                    <Route exact path="/" component={About}/>
-                    <Route path="/about" component={About}/>
+                    <Route exact path="/" component={Event}/>
+                    <Route path="/event" component={Event}/>
                     <Route path="/setting" component={Setting}/>
                 </div>
             </Provider>
