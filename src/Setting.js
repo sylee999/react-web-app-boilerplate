@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import * as actions from './actions';
-import {List, ListItem, RaisedButton, Snackbar, Subheader, TextField} from "material-ui";
+import {LinearProgress, List, ListItem, RaisedButton, Subheader, TextField} from "material-ui";
 
 class Setting extends React.PureComponent {
     componentWillMount() {
@@ -11,10 +11,22 @@ class Setting extends React.PureComponent {
         actions.changeAppMenu("Setting")
     }
 
+    handleLoginOut = e => {
+        const { actions, setting } = this.props;
+        if (setting.session) {
+            actions.requestLogout()
+        } else {
+            actions.requestLogin(setting.token)
+        }
+    };
+
     render() {
         const { actions, setting } = this.props;
         return (
             <div className="body">
+                {setting.isFetching &&
+                    <LinearProgress mode="indeterminate"/>
+                }
                 <List>
                     <Subheader>Login</Subheader>
                     <ListItem disabled>
@@ -22,22 +34,18 @@ class Setting extends React.PureComponent {
                             hintText="github personal access token"
                             floatingLabelText="Personal access token"
                             value={setting.token}
-                            onChange={actions.updateToken}
-                        />
-                        <RaisedButton
-                            label="Login"
-                            primary
-                            onMouseDown={e => {
-                                actions.requestLogin(setting.token)
+                            onChange={(e, token) => {
+                                actions.updateToken(token);
                             }}
-                            style={{marginLeft:"20px"}}
+                        />
+                        <span style={{margin:"10px"}}></span>
+                        <RaisedButton
+                            label={setting.session ? "Logout" : "Login"}
+                            primary
+                            onMouseDown={this.handleLoginOut}
                         />
                     </ListItem>
                 </List>
-                {/*<Snackbar*/}
-                    {/*open={setting.request.done}*/}
-                    {/*message={setting.request.message || ""}*/}
-                {/*/>*/}
             </div>
         );
     }

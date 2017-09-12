@@ -1,5 +1,8 @@
 import { combineReducers } from 'redux';
-import {CHANGE_APP_MENU, REQUEST_SESSION, OPEN_APP_DRAWER, UPDATE_TOKEN, RECEIVE_SESSION} from '../actions';
+import {
+    CHANGE_APP_MENU, REQUEST_SESSION, OPEN_APP_DRAWER, UPDATE_TOKEN, UPDATE_SESSION,
+    NOTIFY_MESSAGE
+} from '../actions';
 
 const app = (state = { menu: "", drawer: false }, action) => {
     switch (action.type) {
@@ -18,24 +21,34 @@ const app = (state = { menu: "", drawer: false }, action) => {
     }
 };
 
-const setting = (state = { token: localStorage.token }, action) => {
+const setting = (state = { token: localStorage.token, isFetching: false }, action) => {
     switch (action.type) {
         case UPDATE_TOKEN:
             return {
                 ...state,
                 token: action.token
             };
-        case RECEIVE_SESSION:
+        case NOTIFY_MESSAGE:
             return {
                 ...state,
-                session: action.session
+                message: action.message
             };
         case REQUEST_SESSION:
+            return {
+                ...state,
+                isFetching: true
+            };
+        case UPDATE_SESSION:
+            return {
+                ...state,
+                session: action.session,
+                lastUpdated: action.receivedAt,
+                isFetching: false
+            };
         default:
             return state;
     }
 };
-
 
 const reducers = combineReducers({
     app,

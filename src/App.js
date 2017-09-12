@@ -10,7 +10,7 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {Avatar, List, ListItem} from "material-ui";
+import {Avatar, Dialog, FlatButton, List, ListItem, Snackbar} from "material-ui";
 
 import Events from "./Events"
 import Setting from "./Setting"
@@ -47,6 +47,7 @@ class App extends React.Component {
                 url: setting.session.html_url,
             };
         }
+        let closeNotify = false;
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
@@ -68,7 +69,7 @@ class App extends React.Component {
                                 style={{
                                     height: 40
                                 }}
-                                leftAvatar={<Avatar size="60" src={user.avatar_url}/>}
+                                leftAvatar={<Avatar size={60} src={user.avatar_url}/>}
                                 disabled
                             />
                             <ListItem
@@ -88,6 +89,21 @@ class App extends React.Component {
                                       containerElement={<Link to='/setting'/>} primaryText="Setting"/>
                         </List>
                     </Drawer>
+                    {/* global message component */}
+                    <Dialog
+                        title="Error!!"
+                        actions={<FlatButton label="Close" primary={true} onClick={() => {actions.notifyMessage({status: "DONE"})}}/>}
+                        modal={false}
+                        open={(setting.message && setting.message.status === "ERROR")}
+                        onRequestClose={() => {actions.notifyMessage({status: "DONE"})}}
+                    >
+                        {setting.message && setting.message.message}
+                    </Dialog>
+                    <Snackbar
+                        open={setting.message && setting.message.status === "SUCCESS"}
+                        message={setting.message && setting.message.message}
+                        onRequestClose={() => {actions.notifyMessage({status: "DONE"})}}
+                    />
                     <Provider store={store}>
                         <div>
                             <Route exact path="/" component={Events}/>
