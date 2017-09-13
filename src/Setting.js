@@ -8,12 +8,13 @@ import {LinearProgress, List, ListItem, RaisedButton, Subheader, TextField} from
 class Setting extends React.PureComponent {
     componentWillMount() {
         const { actions } = this.props;
-        actions.changeAppMenu("Setting")
+        actions.setAppMenu("Setting");
+        actions.updateToken(localStorage.token);
     }
 
     handleLoginOut = e => {
-        const { actions, setting } = this.props;
-        if (setting.session) {
+        const { actions, session, setting } = this.props;
+        if (session.user.login) {
             actions.requestLogout()
         } else {
             actions.requestLogin(setting.token)
@@ -21,10 +22,10 @@ class Setting extends React.PureComponent {
     };
 
     render() {
-        const { actions, setting } = this.props;
+        const { actions, setting, session } = this.props;
         return (
-            <div className="body">
-                {setting.isFetching &&
+            <div>
+                {session.isFetching &&
                     <LinearProgress mode="indeterminate"/>
                 }
                 <List>
@@ -40,7 +41,7 @@ class Setting extends React.PureComponent {
                         />
                         <span style={{margin:"10px"}}></span>
                         <RaisedButton
-                            label={setting.session ? "Logout" : "Login"}
+                            label={session.user.login ? "Logout" : "Login"}
                             primary
                             onMouseDown={this.handleLoginOut}
                         />
@@ -51,7 +52,8 @@ class Setting extends React.PureComponent {
     }
 }
 const mapStateToProps = (state, ownProps) => ({
-    setting: state.setting
+    setting: state.setting,
+    session: state.session
 });
 const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(actions, dispatch)

@@ -1,49 +1,82 @@
 import { combineReducers } from 'redux';
 import {
-    CHANGE_APP_MENU, REQUEST_SESSION, OPEN_APP_DRAWER, UPDATE_TOKEN, UPDATE_SESSION,
-    NOTIFY_MESSAGE
+    APP_MENU, APP_DRAWER, APP_NOTIFICATION,
+    TOKEN_UPDATE,
+    USER_REQUEST, USER_RECEIVE,
+    EVENTS_REQUEST, EVENTS_RECEIVE, GUEST_USER
 } from '../actions';
+import {merge} from "lodash";
 
-const app = (state = { menu: "", drawer: false }, action) => {
+const app = (state = {menu: "", drawer: false, notification: {status: "DONE", message: ""}}, action) => {
     switch (action.type) {
-        case CHANGE_APP_MENU:
+        case APP_MENU:
             return {
                 ...state,
                 menu: action.menu
             };
-        case OPEN_APP_DRAWER:
+        case APP_DRAWER:
             return {
                 ...state,
                 drawer: action.drawer
+            };
+        case APP_NOTIFICATION:
+            return {
+                ...state,
+                notification: action.notification
             };
         default:
             return state;
     }
 };
 
-const setting = (state = { token: localStorage.token, isFetching: false }, action) => {
+const setting = (state = {token: ""}, action) => {
     switch (action.type) {
-        case UPDATE_TOKEN:
+        case TOKEN_UPDATE:
             return {
                 ...state,
                 token: action.token
             };
-        case NOTIFY_MESSAGE:
-            return {
-                ...state,
-                message: action.message
-            };
-        case REQUEST_SESSION:
+        default:
+            return state;
+    }
+};
+
+const session = (state = {user: GUEST_USER, isFetching: false}, action) => {
+    switch (action.type) {
+        case USER_REQUEST:
             return {
                 ...state,
                 isFetching: true
             };
-        case UPDATE_SESSION:
-            return {
-                ...state,
-                session: action.session,
+        case USER_RECEIVE:
+            return merge({}, state, {
+                user: action.user,
                 lastUpdated: action.receivedAt,
                 isFetching: false
+            });
+            // return {
+            //     ...state,
+            //     user: action.user,
+            //     lastUpdated: action.receivedAt,
+            //     isFetching: false
+            // };
+        default:
+            return state;
+    }
+};
+
+const events = (state = {events: [], isFetching: false}, action) => {
+    switch (action.type) {
+        case EVENTS_REQUEST:
+            return {
+                ...state,
+                isFetching: true
+            };
+        case EVENTS_RECEIVE:
+            return {
+                ...state,
+                events: action.events,
+                isFetching: true
             };
         default:
             return state;
@@ -52,7 +85,9 @@ const setting = (state = { token: localStorage.token, isFetching: false }, actio
 
 const reducers = combineReducers({
     app,
-    setting
+    setting,
+    session,
+    events,
 });
 
 export default reducers;

@@ -32,22 +32,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { store, app, setting, actions } = this.props;
-        let user = {
-            avatar_url: 'images/guest.png',
-            name: 'Guest',
-            login: 'unknown',
-            url: '',
-        };
-        if (setting.session) {
-            user = {
-                avatar_url: setting.session.avatar_url,
-                name: setting.session.name,
-                login: setting.session.login,
-                url: setting.session.html_url,
-            };
-        }
-        let closeNotify = false;
+        const { store, app, session, actions } = this.props;
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
@@ -69,15 +54,15 @@ class App extends React.Component {
                                 style={{
                                     height: 40
                                 }}
-                                leftAvatar={<Avatar size={60} src={user.avatar_url}/>}
+                                leftAvatar={<Avatar size={60} src={session.user.avatar_url}/>}
                                 disabled
                             />
                             <ListItem
                                 primaryText={
-                                    <div style={{color: muiTheme.palette.alternateTextColor}}>{user.name}</div>
+                                    <div style={{color: muiTheme.palette.alternateTextColor}}>{session.user.name}</div>
                                 }
                                 secondaryText={
-                                    <span style={{color: muiTheme.palette.accent2Color}}>{user.login}</span>
+                                    <span style={{color: muiTheme.palette.accent2Color}}>{session.user.login}</span>
                                 }
                                 disabled
                             />
@@ -89,25 +74,25 @@ class App extends React.Component {
                                       containerElement={<Link to='/setting'/>} primaryText="Setting"/>
                         </List>
                     </Drawer>
-                    {/* global message component */}
                     <Dialog
                         title="Error!!"
-                        actions={<FlatButton label="Close" primary={true} onClick={() => {actions.notifyMessage({status: "DONE"})}}/>}
+                        actions={<FlatButton label="Close" primary={true} onClick={() => {actions.notifyMessage({status: "DONE", message:""})}}/>}
                         modal={false}
-                        open={(setting.message && setting.message.status === "ERROR")}
-                        onRequestClose={() => {actions.notifyMessage({status: "DONE"})}}
+                        open={(app.notification.status === "ERROR")}
+                        onRequestClose={() => {actions.notifyMessage({status: "DONE", message:""})}}
                     >
-                        {setting.message && setting.message.message}
+                        {app.notification.message}
                     </Dialog>
                     <Snackbar
-                        open={setting.message && setting.message.status === "SUCCESS"}
-                        message={setting.message && setting.message.message}
-                        onRequestClose={() => {actions.notifyMessage({status: "DONE"})}}
+                        open={app.notification.status === "SUCCESS"}
+                        autoHideDuration={2000}
+                        message={app.notification.message}
+                        onRequestClose={() => {actions.notifyMessage({status: "DONE", message:""})}}
                     />
                     <Provider store={store}>
                         <div>
-                            <Route exact path="/" component={Events}/>
-                            <Route path="/event" component={Events}/>
+                            <Route exact path="/" render={props => (<Events {...props}/>)}/>
+                            <Route path="/event" render={props => (<Events {...props}/>)}/>
                             <Route path="/setting" component={Setting}/>
                         </div>
                     </Provider>
@@ -119,7 +104,9 @@ class App extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     app: state.app,
-    setting: state.setting
+    setting: state.setting,
+    session: state.session,
+    events: state.events
 });
 
 const mapDispatchToProps = dispatch => ({
