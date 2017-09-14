@@ -1,34 +1,34 @@
 import React from 'react';
 import {Avatar, Card, CardHeader, CardText, Chip} from "material-ui";
 
-const Event = ({event}) => {
-    const getTitle = (event) => {
-        switch (event.type) {
+const Event = ({item}) => {
+    const getTitle = (item) => {
+        switch (item.type) {
             case "IssuesEvent":
-                return event.payload.issue.title;
+                return item.payload.issue.title;
             case "IssueCommentEvent":
-                return event.payload.comment.body.slice(0, 100) + "...";
+                return item.payload.comment.body.slice(0, 100) + "...";
             case "PushEvent":
-                return event.payload.commits[0].message.slice(0, 100) + "...";
+                return item.payload.commits[0].message.slice(0, 100) + "...";
             case "PullRequestEvent":
-                return event.payload.pull_request.title;
+                return item.payload.pull_request.title;
             default:
-                return event.payload.title;
+                return item.type;
         }
     };
-    const body = JSON.stringify(event.payload, null, 4);
+    const body = JSON.stringify(item.payload, null, 4);
 
     return (
         <Card initiallyExpanded={false}>
             <CardHeader
-                avatar={<Avatar>{event.type.replace("Event", '').replace(/[a-z]/g, '')}</Avatar>}
+                avatar={<Avatar>{item.type.replace("Event", '').replace(/[a-z]/g, '')}</Avatar>}
                 title={
                     <div style={{alignItems: "center", display: "flex", flexWrap: "wrap"}}>
-                        <span>{getTitle(event)}</span>
-                        <Chip style={{margin: 4}}><Avatar src={event.actor.avatar_url} /> {event.actor.login}</Chip>
+                        <span>{getTitle(item)}</span>
+                        <Chip style={{margin: 4}}><Avatar src={item.actor.avatar_url} /> {item.actor.login}</Chip>
                     </div>
                 }
-                subtitle={new Date(event.created_at).toLocaleString()}
+                subtitle={new Date(item.created_at).toLocaleString()}
                 showExpandableButton={true}
             />
             <CardText

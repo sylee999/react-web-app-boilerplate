@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import * as actions from './actions';
-import {LinearProgress, List, ListItem, RaisedButton, Subheader, TextField} from "material-ui";
+import { List, ListItem, RaisedButton, Subheader, TextField} from "material-ui";
 
 class Setting extends React.PureComponent {
     componentWillMount() {
@@ -25,9 +25,6 @@ class Setting extends React.PureComponent {
         const { actions, setting, session } = this.props;
         return (
             <div>
-                {session.isFetching &&
-                    <LinearProgress mode="indeterminate"/>
-                }
                 <List>
                     <Subheader>Login</Subheader>
                     <ListItem disabled>

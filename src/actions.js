@@ -32,6 +32,7 @@ export const receiveUser = user => ({ type: USER_RECEIVE, receivedAt: Date.now()
 
 export const requestLogin = () => {
     return dispatch => {
+        dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
         dispatch(requestUser());
         return fetch('https://api.github.com/user', {
             headers: {
@@ -65,31 +66,47 @@ export const EVENTS_REQUEST = 'EVENTS_REQUEST';
 export const EVENTS_RECEIVE = 'EVENTS_RECEIVE';
 
 export const requestEvents = () => ({type: EVENTS_REQUEST});
-export const receiveEvents = events => ({type: EVENTS_RECEIVE, receivedAt: Date.now(), events});
+export const receiveEvents = (items, nextPageUrl) => ({type: EVENTS_RECEIVE, nextPageUrl: nextPageUrl, receivedAt: Date.now(), items});
 
-export const fetchEvents = username => {
+export const fetchEvents = (username, nextPageUrl) => {
     return dispatch => {
-        if (!/^[a-z0-9]+$/i.test(localStorage.token)) {
-            return dispatch(notifyMessage({status: "ERROR", message: "Invalid token string.", notifiedAt: Date.now()}));
-        }
+        dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
         dispatch(requestEvents());
-        return fetch('https://api.github.com/users/' + username + '/events', {
+        return fetch(nextPageUrl || 'https://api.github.com/users/' + username + '/events', {
             headers: {
-                'Authorization' : 'token ' + localStorage.token,
+                'Authorization': 'token ' + localStorage.token,
                 'Accept': 'application/vnd.github.html+json',
                 'Content-Type': 'application/json'
             }
         })
-            .then(response =>
-                response.json().then(json => {
+            .then(response => {
+                const nextPageUrl = getNextPageUrl(response);
+                return response.json().then(json => {
                     if (!response.ok) {
-                        return dispatch(notifyMessage({status: "ERROR", message: json.message, notifiedAt: Date.now()}));
+                        return dispatch(notifyMessage({
+                            status: "ERROR",
+                            message: json.message,
+                            notifiedAt: Date.now()
+                        }));
                     }
-
                     dispatch(notifyMessage({status: "SUCCESS", message: "Updated!", notifiedAt: Date.now()}));
-                    return dispatch(receiveEvents(json))
+                    return dispatch(receiveEvents(json, nextPageUrl))
                 })
-            );
+            });
     }
 };
 
+// Extracts the next page URL from Github API response.
+const getNextPageUrl = response => {
+    const link = response.headers.get('link')
+    if (!link) {
+        return null
+    }
+
+    const nextLink = link.split(',').find(s => s.indexOf('rel="next"') > -1)
+    if (!nextLink) {
+        return null
+    }
+
+    return nextLink.split(';')[0].slice(1, -1)
+};

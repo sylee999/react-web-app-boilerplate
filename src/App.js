@@ -10,7 +10,7 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {Avatar, Dialog, FlatButton, List, ListItem, Snackbar} from "material-ui";
+import {Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Snackbar} from "material-ui";
 
 import Events from "./Events"
 import Setting from "./Setting"
@@ -91,6 +91,9 @@ class App extends React.Component {
                     />
                     <Provider store={store}>
                         <div>
+                            {session.isFetching &&
+                                <LinearProgress mode="indeterminate"/>
+                            }
                             <Route exact path="/" render={props => (<Events {...props}/>)}/>
                             <Route path="/event" render={props => (<Events {...props}/>)}/>
                             <Route path="/setting" component={Setting}/>

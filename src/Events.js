@@ -4,11 +4,15 @@ import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import * as actions from './actions';
 import Event from "./Event";
+import {RaisedButton} from "material-ui";
 
 class Events extends React.Component {
     componentWillMount() {
-        const { actions } = this.props;
+        const { actions, session } = this.props;
         actions.setAppMenu("Events")
+        if (session.user.login) {
+            actions.fetchEvents(session.user.login);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -19,10 +23,15 @@ class Events extends React.Component {
     }
 
     render() {
+        const {events, session, actions} = this.props;
         return (
             <div>
-                <h2>Events</h2>
-                {this.props.events.events.map((event, i) => <Event event={event} key={event.id}/>)}
+                {events.items.map((item, i) => <Event item={item} key={item.id}/>)}
+                {(events.items && events.items.length > 0) &&
+                    <RaisedButton label="MORE" fullWidth={true} onClick={(e) => {
+                        actions.fetchEvents(session.user.login, events.nextPageUrl)
+                    }} disabled={!events.nextPageUrl} />
+                }
             </div>
         );
     }

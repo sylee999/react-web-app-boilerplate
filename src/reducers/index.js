@@ -5,7 +5,6 @@ import {
     USER_REQUEST, USER_RECEIVE,
     EVENTS_REQUEST, EVENTS_RECEIVE, GUEST_USER
 } from '../actions';
-import {merge} from "lodash";
 
 const app = (state = {menu: "", drawer: false, notification: {status: "DONE", message: ""}}, action) => {
     switch (action.type) {
@@ -49,23 +48,18 @@ const session = (state = {user: GUEST_USER, isFetching: false}, action) => {
                 isFetching: true
             };
         case USER_RECEIVE:
-            return merge({}, state, {
+            return {
+                ...state,
                 user: action.user,
                 lastUpdated: action.receivedAt,
                 isFetching: false
-            });
-            // return {
-            //     ...state,
-            //     user: action.user,
-            //     lastUpdated: action.receivedAt,
-            //     isFetching: false
-            // };
+            };
         default:
             return state;
     }
 };
 
-const events = (state = {events: [], isFetching: false}, action) => {
+const events = (state = {items: [], isFetching: false}, action) => {
     switch (action.type) {
         case EVENTS_REQUEST:
             return {
@@ -75,7 +69,8 @@ const events = (state = {events: [], isFetching: false}, action) => {
         case EVENTS_RECEIVE:
             return {
                 ...state,
-                events: action.events,
+                items: state.items.concat(action.items),
+                nextPageUrl: action.nextPageUrl,
                 isFetching: true
             };
         default:
