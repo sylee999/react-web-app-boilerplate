@@ -10,32 +10,49 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Snackbar} from "material-ui";
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import {
+    Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper,
+    Snackbar
+} from "material-ui";
 
 import Events from "./Events"
 import Setting from "./Setting"
 import { Provider } from 'react-redux'
 import {indigo500, indigo700} from "material-ui/styles/colors";
+import * as _ from "lodash";
 
-const muiTheme = getMuiTheme({
-    palette: {
-        primary1Color: indigo500,
-        primary2Color: indigo700,
-        pickerHeaderColor: indigo500,
-    }
-});
 
 class App extends React.Component {
+    getTheme(darkMode) {
+        const theme = darkMode ? darkBaseTheme : lightBaseTheme;
+        this.muiTheme = getMuiTheme(_.merge(theme,
+            {
+                palette: {
+                    primary1Color: indigo500,
+                    primary2Color: indigo700,
+                    pickerHeaderColor: indigo500,
+                }
+            }));
+    }
+
     componentWillMount() {
-        const { actions } = this.props;
+        const {actions, setting} = this.props;
+        actions.loadSetting();
         actions.requestLogin();
+        this.getTheme(setting.darkMode)
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.getTheme(nextProps.setting.darkMode);
     }
 
     render() {
         const { store, app, session, actions } = this.props;
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
-                <div>
+            <MuiThemeProvider muiTheme={this.muiTheme}>
+                <Paper style={{height: "100vh"}}>
                     <AppBar
                         title={app.menu || "Home"}
                         onLeftIconButtonTouchTap={
@@ -48,7 +65,7 @@ class App extends React.Component {
                         onRequestChange={(open) => actions.openAppDrawer(open)}
                     >
                         <List style={{
-                            backgroundColor: muiTheme.palette.primary1Color,
+                            backgroundColor: this.muiTheme.palette.primary1Color,
                         }}>
                             <ListItem
                                 style={{
@@ -59,10 +76,10 @@ class App extends React.Component {
                             />
                             <ListItem
                                 primaryText={
-                                    <div style={{color: muiTheme.palette.alternateTextColor}}>{session.user.name}</div>
+                                    <div style={{color: this.muiTheme.palette.alternateTextColor}}>{session.user.name}</div>
                                 }
                                 secondaryText={
-                                    <span style={{color: muiTheme.palette.accent2Color}}>{session.user.login}</span>
+                                    <span style={{color: this.muiTheme.palette.accent2Color}}>{session.user.login}</span>
                                 }
                                 disabled
                             />
@@ -94,12 +111,12 @@ class App extends React.Component {
                             {session.isFetching &&
                                 <LinearProgress mode="indeterminate"/>
                             }
-                            <Route exact path="/" render={props => (<Events {...props}/>)}/>
-                            <Route path="/event" render={props => (<Events {...props}/>)}/>
+                            <Route exact path="/" component={Events}/>
+                            <Route path="/event" component={Events}/>
                             <Route path="/setting" component={Setting}/>
                         </div>
                     </Provider>
-                </div>
+                </Paper>
             </MuiThemeProvider>
         );
     }

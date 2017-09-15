@@ -28,9 +28,11 @@ class Events extends React.Component {
             <div>
                 {events.items.map((item, i) => <Event item={item} key={item.id}/>)}
                 {(events.items && events.items.length > 0) &&
-                    <RaisedButton label="MORE" fullWidth={true} onClick={(e) => {
+                    <RaisedButton fullWidth={true} onClick={(e) => {
                         actions.fetchEvents(session.user.login, events.nextPageUrl)
-                    }} disabled={!events.nextPageUrl} />
+                    }} disabled={!events.nextPageUrl}>
+                        MORE
+                    </RaisedButton>
                 }
             </div>
         );
@@ -38,7 +40,6 @@ class Events extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    app: state.app,
     session: state.session,
     events: state.events
 });

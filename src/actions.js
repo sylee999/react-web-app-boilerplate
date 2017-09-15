@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 export const APP_MENU = 'APP_MENU';
 export const APP_DRAWER = 'APP_DRAWER';
 export const APP_NOTIFICATION = 'APP_NOTIFICATION';
@@ -8,6 +10,14 @@ export const notifyMessage = notification => ({type: APP_NOTIFICATION, notificat
 
 
 export const TOKEN_UPDATE = 'TOKEN_UPDATE';
+export const DARK_MODE_UPDATE = 'DARK_MODE_UPDATE';
+
+export const loadSetting = () => {
+    return dispatch => {
+        dispatch(updateToken(localStorage.token));
+        dispatch(updateDarkMode(localStorage.darkMode));
+    }
+};
 
 export const updateToken = (token) => {
     if (token.length !== 0 && !/^[a-z0-9]+$/i.test(token)) {
@@ -15,6 +25,12 @@ export const updateToken = (token) => {
     }
     localStorage.token = token;
     return {type: TOKEN_UPDATE, token}
+};
+
+export const updateDarkMode = (darkMode) => {
+    const isDarkMode = _.isBoolean(darkMode) ? darkMode : darkMode === "true";
+    localStorage.darkMode = isDarkMode;
+    return {type: DARK_MODE_UPDATE, darkMode: isDarkMode}
 };
 
 export const USER_REQUEST = 'USER_REQUEST';
