@@ -9,6 +9,7 @@ export const openAppDrawer = drawer => ({type: APP_DRAWER, drawer});
 export const notifyMessage = notification => ({type: APP_NOTIFICATION, notification});
 
 
+export const ACCOUNT_UPDATE = 'ACCOUNT_UPDATE';
 export const TOKEN_UPDATE = 'TOKEN_UPDATE';
 export const DARK_MODE_UPDATE = 'DARK_MODE_UPDATE';
 
@@ -17,6 +18,14 @@ export const loadSetting = () => {
         dispatch(updateToken(localStorage.token));
         dispatch(updateDarkMode(localStorage.darkMode));
     }
+};
+
+export const updateAccount = (account) => {
+    if (account.token.length !== 0 && !/^[a-z0-9]+$/i.test(account.token)) {
+        return notifyMessage({status: "ERROR", message: "Invalid token string.", notifiedAt: Date.now()});
+    }
+    localStorage.account = account;
+    return {type: ACCOUNT_UPDATE, account}
 };
 
 export const updateToken = (token) => {

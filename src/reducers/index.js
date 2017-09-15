@@ -3,7 +3,7 @@ import {
     APP_MENU, APP_DRAWER, APP_NOTIFICATION,
     TOKEN_UPDATE,
     USER_REQUEST, USER_RECEIVE,
-    EVENTS_REQUEST, EVENTS_RECEIVE, GUEST_USER, DARK_MODE_UPDATE
+    EVENTS_REQUEST, EVENTS_RECEIVE, GUEST_USER, DARK_MODE_UPDATE, ACCOUNT_UPDATE
 } from '../actions';
 
 const app = (state = {menu: "", drawer: false, notification: {status: "DONE", message: ""}}, action) => {
@@ -28,12 +28,17 @@ const app = (state = {menu: "", drawer: false, notification: {status: "DONE", me
     }
 };
 
-const setting = (state = {token: "", darkMode:false}, action) => {
+const setting = (state = {token: "", account:{}, darkMode:false}, action) => {
     switch (action.type) {
         case TOKEN_UPDATE:
             return {
                 ...state,
                 token: action.token
+            };
+        case ACCOUNT_UPDATE:
+            return {
+                ...state,
+                account: action.account
             };
         case DARK_MODE_UPDATE:
             return {

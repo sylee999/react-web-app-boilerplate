@@ -4,8 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import * as actions from './actions';
 import {
-    Card, CardActions, CardHeader, CardText,
-    Dialog, Divider, FlatButton, List, ListItem, MenuItem, Paper, RaisedButton, SelectField, Subheader,
+    Dialog, Divider, FlatButton, List, ListItem, MenuItem, RaisedButton, SelectField, Subheader,
     TextField, Toggle
 } from "material-ui";
 import AccountCircle from "material-ui/svg-icons/action/account-circle";
@@ -14,8 +13,10 @@ class Setting extends React.PureComponent {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            accountDialogOpen: false
+            accountDialogOpen: false,
+            account: { server: "github", url: "github.com" }
         };
+        this.account = {};
     }
 
     componentWillMount() {
@@ -39,6 +40,21 @@ class Setting extends React.PureComponent {
         actions.updateDarkMode(isInputChecked);
     };
 
+    handleAccountServerChange = (event, index, value) => {
+        const serverAndUrl = {server: value};
+        if ("github" === value) {
+            serverAndUrl.url = "github.com";
+        }
+        this.setState((prevState) => ({account: { ...prevState.account, ...serverAndUrl}}));
+    };
+
+    handleAccountUrlChange = (event, value) => {
+        this.setState((prevState) => ({account: { ...prevState.account, url: value}}));
+    };
+    handleAccountTokenChange = (event, value) => {
+        this.setState((prevState) => ({account: { ...prevState.account, token: value}}));
+    };
+
     handleAccountDialogOpen = e => {
         this.setState({accountDialogOpen: true});
     };
@@ -48,8 +64,8 @@ class Setting extends React.PureComponent {
     };
 
     handleAccountDialogSubmit = e => {
-        const { actions, setting } = this.props;
-        actions.requestLogin(setting.token);
+        const { actions } = this.props;
+        actions.updateAccount(this.state.account);
 
         this.handleAccountDialogClose(e);
     };
@@ -98,9 +114,9 @@ class Setting extends React.PureComponent {
                 >
                     <SelectField
                         floatingLabelText="Github Server"
-                        value="github"
+                        value={this.state.account.server}
+                        onChange={this.handleAccountServerChange}
                         fullWidth
-                        onChange={this.handleChange}
                     >
                         <MenuItem value="github" primaryText="github.com"/>
                         <MenuItem value="enterprise" primaryText="Github Enterprise"/>
@@ -109,17 +125,19 @@ class Setting extends React.PureComponent {
                     <TextField
                         floatingLabelText="Github Enterprise URL"
                         hintText="http://domain/v3/"
+                        onChange={this.handleAccountUrlChange}
                         floatingLabelFixed
                         fullWidth
-                        value={this.state.githubServer}
+                        value={this.state.account.url}
                     />
                     <br/>
                     <TextField
                         hintText="Github Personal Access Token"
                         floatingLabelText="Personal Access Token"
+                        onChange={this.handleAccountTokenChange}
                         floatingLabelFixed
                         fullWidth
-                        value={this.state.githubServer}
+                        value={this.state.account.token}
                     /><br/>
                 </Dialog>
             </div>
