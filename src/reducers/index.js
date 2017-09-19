@@ -28,7 +28,7 @@ const app = (state = {menu: "", drawer: false, notification: {status: "DONE", me
     }
 };
 
-const setting = (state = {token: "", account:{}, darkMode:false}, action) => {
+const settings = (state = {token: "", account:{}, darkMode:false}, action) => {
     switch (action.type) {
         case TOKEN_UPDATE:
             return {
@@ -90,7 +90,7 @@ const events = (state = {items: [], isFetching: false}, action) => {
 
 const reducers = combineReducers({
     app,
-    setting,
+    settings,
     session,
     events,
 });

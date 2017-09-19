@@ -1,5 +1,3 @@
-import * as _ from "lodash";
-
 export const APP_MENU = 'APP_MENU';
 export const APP_DRAWER = 'APP_DRAWER';
 export const APP_NOTIFICATION = 'APP_NOTIFICATION';
@@ -13,33 +11,56 @@ export const ACCOUNT_UPDATE = 'ACCOUNT_UPDATE';
 export const TOKEN_UPDATE = 'TOKEN_UPDATE';
 export const DARK_MODE_UPDATE = 'DARK_MODE_UPDATE';
 
-export const loadSetting = () => {
+export const loadSettings = () => {
     return dispatch => {
-        dispatch(updateToken(localStorage.token));
-        dispatch(updateDarkMode(localStorage.darkMode));
+        const settings = getSettings();
+        dispatch(updateAccount(settings.account || {}));
+        dispatch(updateDarkMode(settings.darkMode || false));
     }
 };
 
-export const updateAccount = (account) => {
-    if (account.token.length !== 0 && !/^[a-z0-9]+$/i.test(account.token)) {
-        return notifyMessage({status: "ERROR", message: "Invalid token string.", notifiedAt: Date.now()});
+const getSettings = () => {
+    try {
+        return JSON.parse(localStorage.settings);
+    } catch (err) {
+        console.warn(err);
+        return {};
     }
-    localStorage.account = account;
+};
+
+const saveSettings = settings => {
+    localStorage.settings = JSON.stringify(settings);
+};
+
+export const saveAccount = (account) => {
+    return (dispatch, getState) => {
+        if (account.token && !/^[a-z0-9]+$/i.test(account.token)) {
+            return notifyMessage({status: "ERROR", message: "Invalid token string.", notifiedAt: Date.now()});
+        }
+        const settings = getState().settings;
+        settings.account = account;
+        saveSettings(settings);
+
+        dispatch(updateAccount(account));
+    }
+};
+
+const updateAccount = (account) => {
     return {type: ACCOUNT_UPDATE, account}
 };
 
-export const updateToken = (token) => {
-    if (token.length !== 0 && !/^[a-z0-9]+$/i.test(token)) {
-        return notifyMessage({status: "ERROR", message: "Invalid token string.", notifiedAt: Date.now()});
-    }
-    localStorage.token = token;
-    return {type: TOKEN_UPDATE, token}
+export const saveDarkMode = (darkMode) => {
+    return (dispatch, getState) => {
+        const settings = getState().settings;
+        settings.darkMode = darkMode;
+        saveSettings(settings);
+
+        dispatch(updateDarkMode(darkMode));
+    };
 };
 
-export const updateDarkMode = (darkMode) => {
-    const isDarkMode = _.isBoolean(darkMode) ? darkMode : darkMode === "true";
-    localStorage.darkMode = isDarkMode;
-    return {type: DARK_MODE_UPDATE, darkMode: isDarkMode}
+const updateDarkMode = (darkMode) => {
+    return {type: DARK_MODE_UPDATE, darkMode}
 };
 
 export const USER_REQUEST = 'USER_REQUEST';
@@ -56,12 +77,16 @@ export const requestUser = () => ({ type: USER_REQUEST });
 export const receiveUser = user => ({ type: USER_RECEIVE, receivedAt: Date.now(), user });
 
 export const requestLogin = () => {
-    return dispatch => {
+    return (dispatch, getState) => {
+        const account = getState().settings.account;
+        if (!account.url || !account.token) {
+            return;
+        }
         dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
         dispatch(requestUser());
-        return fetch('https://api.github.com/user', {
+        return fetch('https://' + account.url + '/user', {
             headers: {
-                'Authorization' : 'token ' + localStorage.token,
+                'Authorization': 'token ' + account.token,
                 'Accept': 'application/vnd.github.html+json',
                 'Content-Type': 'application/json'
             }
@@ -74,15 +99,19 @@ export const requestLogin = () => {
                     }
 
                     dispatch(notifyMessage({status: "SUCCESS", message: "Welcome " + json.name, notifiedAt: Date.now()}));
+                    account.login = json.login;
+                    saveAccount(account);
                     return dispatch(receiveUser(json))
-                })
+                }),
+                error => {
+                    dispatch(notifyMessage({status: "ERROR", message: error.message, notifiedAt: Date.now()}))
+                }
             );
     }
 };
 
 export const requestLogout = () => {
     return dispatch => {
-        dispatch(updateToken(""));
         dispatch(receiveUser(GUEST_USER));
     }
 };
@@ -94,12 +123,16 @@ export const requestEvents = () => ({type: EVENTS_REQUEST});
 export const receiveEvents = (items, nextPageUrl) => ({type: EVENTS_RECEIVE, nextPageUrl: nextPageUrl, receivedAt: Date.now(), items});
 
 export const fetchEvents = (username, nextPageUrl) => {
-    return dispatch => {
+    return (dispatch, getState) => {
+        const account = getState().settings.account;
+        if (!account.url || !account.token) {
+            return;
+        }
         dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
         dispatch(requestEvents());
-        return fetch(nextPageUrl || 'https://api.github.com/users/' + username + '/events', {
+        return fetch(nextPageUrl || 'https://' + account.url + '/users/' + username + '/events', {
             headers: {
-                'Authorization': 'token ' + localStorage.token,
+                'Authorization': 'token ' + account.token,
                 'Accept': 'application/vnd.github.html+json',
                 'Content-Type': 'application/json'
             }
@@ -135,3 +168,4 @@ const getNextPageUrl = response => {
 
     return nextLink.split(';')[0].slice(1, -1)
 };
+

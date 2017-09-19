@@ -1,7 +1,6 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 
 import * as actions from './actions';
@@ -18,10 +17,11 @@ import {
 } from "material-ui";
 
 import Events from "./Events"
-import Setting from "./Setting"
+import Settings from "./Settings"
 import { Provider } from 'react-redux'
-import {indigo500, indigo700} from "material-ui/styles/colors";
+import {indigo500, indigo300} from "material-ui/styles/colors";
 import * as _ from "lodash";
+import PrivateRoute from "./PrivateRoute";
 
 
 class App extends React.Component {
@@ -30,22 +30,25 @@ class App extends React.Component {
         this.muiTheme = getMuiTheme(_.merge(theme,
             {
                 palette: {
-                    primary1Color: indigo500,
-                    primary2Color: indigo700,
-                    pickerHeaderColor: indigo500,
+                    primary1Color: indigo300,
+                    primary2Color: indigo500,
+                    pickerHeaderColor: indigo300,
                 }
             }));
     }
 
     componentWillMount() {
-        const {actions, setting} = this.props;
-        actions.loadSetting();
-        actions.requestLogin();
-        this.getTheme(setting.darkMode)
+        const { settings, actions } = this.props;
+        actions.loadSettings();
+        this.getTheme(settings.darkMode)
+    }
+
+    componentDidMount() {
+        this.props.actions.requestLogin();
     }
 
     componentWillReceiveProps(nextProps) {
-        this.getTheme(nextProps.setting.darkMode);
+        this.getTheme(nextProps.settings.darkMode);
     }
 
     render() {
@@ -88,7 +91,7 @@ class App extends React.Component {
                             <MenuItem onClick={() => actions.openAppDrawer(false)}
                                       containerElement={<Link to='/event'/>} primaryText="Events"/>
                             <MenuItem onClick={() => actions.openAppDrawer(false)}
-                                      containerElement={<Link to='/setting'/>} primaryText="Setting"/>
+                                      containerElement={<Link to='/settings'/>} primaryText="Settings"/>
                         </List>
                     </Drawer>
                     <Dialog
@@ -108,12 +111,12 @@ class App extends React.Component {
                     />
                     <Provider store={store}>
                         <div>
-                            {session.isFetching &&
+                            {app.notification.START &&
                                 <LinearProgress mode="indeterminate"/>
                             }
-                            <Route exact path="/" component={Events}/>
-                            <Route path="/event" component={Events}/>
-                            <Route path="/setting" component={Setting}/>
+                            <PrivateRoute exact path="/" session={session} component={Events}/>
+                            <PrivateRoute path="/event" session={session} component={Events}/>
+                            <Route path="/settings" component={Settings}/>
                         </div>
                     </Provider>
                 </Paper>
@@ -124,13 +127,14 @@ class App extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     app: state.app,
-    setting: state.setting,
+    settings: state.settings,
     session: state.session,
-    events: state.events
+    events: state.events,
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators(actions, dispatch),
+    dispatch
 });
 
 export default withRouter(connect(
