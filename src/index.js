@@ -1,8 +1,19 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import {render} from 'react-dom';
+import { HashRouter as Router } from 'react-router-dom'
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+import configureStore from './store/configureStore'
+import App from './App';
+
+injectTapEventPlugin();
+
+const store = configureStore();
+
+render(
+    <Router>
+        <App store={store}/>
+    </Router>,
+    document.getElementById('root')
+);
+
