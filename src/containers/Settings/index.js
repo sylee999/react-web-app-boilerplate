@@ -2,12 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
-import * as actions from './actions';
 import {
     Avatar, Dialog, Divider, FlatButton, List, ListItem, MenuItem, SelectField, Subheader,
     TextField, Toggle
 } from "material-ui";
 import AccountCircle from "material-ui/svg-icons/action/account-circle";
+import {saveAccount, saveDarkMode} from "../../redux/modules/settings";
+import {requestLogout} from "../../redux/modules/session";
+import {setAppMenu} from "../../redux/modules/app";
 
 class Settings extends React.Component {
     constructor(props, context) {
@@ -148,7 +150,7 @@ const mapStateToProps = (state, ownProps) => ({
     session: state.session
 });
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators({saveDarkMode, saveAccount, requestLogout, setAppMenu}, dispatch)
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Settings));

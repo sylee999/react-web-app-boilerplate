@@ -3,7 +3,6 @@ import { Route, Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
 
-import * as actions from './actions';
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -12,16 +11,18 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import {
-    Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper,
-    Snackbar
+    Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper, Snackbar
 } from "material-ui";
 
-import Events from "./Events"
-import Settings from "./Settings"
+import Events from "./containers/Events"
+import Settings from "./containers/Settings"
 import { Provider } from 'react-redux'
 import {indigo500, indigo300} from "material-ui/styles/colors";
 import * as _ from "lodash";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./components/PrivateRoute";
+import {loadSettings} from "./redux/modules/settings";
+import {requestLogin} from "./redux/modules/session";
+import {notifyMessage, openAppDrawer} from "./redux/modules/app";
 
 
 class App extends React.Component {
@@ -133,7 +134,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(actions, dispatch),
+    actions: bindActionCreators({loadSettings, requestLogin,openAppDrawer, notifyMessage }, dispatch),
     dispatch
 });
 
