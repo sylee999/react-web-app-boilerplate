@@ -32,6 +32,10 @@ export const fetchEvents = (username, nextPageUrl) => {
         if (!account.url || !account.token) {
             return;
         }
+        const events = getState().events;
+        if (!nextPageUrl && events && events.items && events.items.length > 0) {
+            return;
+        }
         dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
         dispatch(requestEvents());
         return fetch(nextPageUrl || 'https://' + account.url + '/users/' + username + '/events', {
