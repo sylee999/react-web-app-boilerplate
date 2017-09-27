@@ -44,10 +44,6 @@ class App extends React.Component {
         this.getTheme(settings.darkMode)
     }
 
-    componentDidMount() {
-        this.props.actions.requestLogin();
-    }
-
     componentWillReceiveProps(nextProps) {
         this.getTheme(nextProps.settings.darkMode);
     }
