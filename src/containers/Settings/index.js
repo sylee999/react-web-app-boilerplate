@@ -8,7 +8,7 @@ import {
 } from "material-ui";
 import AccountCircle from "material-ui/svg-icons/action/account-circle";
 import {saveAccount, saveDarkMode} from "../../redux/modules/settings";
-import {requestLogout} from "../../redux/modules/session";
+import {requestLogin, requestLogout} from "../../redux/modules/session";
 import {setAppMenu} from "../../redux/modules/app";
 
 class Settings extends React.Component {
@@ -150,7 +150,7 @@ const mapStateToProps = (state, ownProps) => ({
     session: state.session
 });
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators({saveDarkMode, saveAccount, requestLogout, setAppMenu}, dispatch)
+    actions: bindActionCreators({saveDarkMode, saveAccount, requestLogin, requestLogout, setAppMenu}, dispatch)
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Settings));
