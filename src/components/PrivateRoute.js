@@ -2,18 +2,23 @@ import React from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
-import {requestLogin} from "../redux/modules/session";
+import {login} from "../redux/modules/session";
 
 class PrivateRoute extends React.Component {
     componentWillMount() {
-        this.props.actions.requestLogin();
+        const { actions, settings, dispatch } = this.props;
+        actions.login(settings.account);
+        // if (this.props && this.props.actions && this.props.actions.login && this.props.settings.account) {
+        //     this.props.actions.login(this.props.settings.account);
+        // }
     }
 
     render() {
-        const { component: Component, session, ...rest } = this.props;
+        const { component: Component, session, settings, ...rest } = this.props;
         return (
             <Route {...rest} render={props => (
-                session && (session.isFetching || (session.user && session.user.login)) ? (
+                settings.account.token && !session.isFail ? (
+                // session && ((session.user && session.user.login) || settings.token) ? (
                     <Component {...props}/>
                 ) : (
                     <Redirect to={{
@@ -28,10 +33,12 @@ class PrivateRoute extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     session: state.session,
+    settings: state.settings,
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators({ requestLogin }, dispatch),
+    actions: bindActionCreators({ login }, dispatch),
+    dispatch
 });
 
 export default withRouter(connect(

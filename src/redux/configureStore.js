@@ -1,9 +1,10 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
+import { apiMiddleware } from 'redux-api-middleware';
 import rootReducer from './modules/rootReducer'
 import {createLogger} from "redux-logger";
 
-const middleware = [ thunk ];
+const middleware = [ apiMiddleware, thunk, ];
 if (process.env.NODE_ENV !== 'production') {
     middleware.push(createLogger());
 }

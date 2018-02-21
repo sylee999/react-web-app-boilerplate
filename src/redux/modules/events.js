@@ -1,21 +1,32 @@
 import {notifyMessage} from "./app";
+import {CALL_API} from "redux-api-middleware";
+import {begin, end, endAll, pendingTask} from "react-redux-spinner";
 
 export const EVENTS_REQUEST = 'boilerplate/app/EVENTS_REQUEST';
 export const EVENTS_RECEIVE = 'boilerplate/app/EVENTS_RECEIVE';
+export const EVENTS_FAILURE = 'boilerplate/app/EVENTS_FAILURE';
 
 const reducer = (state = {items: [], isFetching: false}, action) => {
     switch (action.type) {
         case EVENTS_REQUEST:
             return {
                 ...state,
-                isFetching: true
+                isFetching: true,
+                isFail: false,
             };
         case EVENTS_RECEIVE:
             return {
                 ...state,
-                items: state.items.concat(action.items),
+                items: state.items.concat(action.payload),
                 nextPageUrl: action.nextPageUrl,
-                isFetching: true
+                isFetching: true,
+                isFail: false,
+            };
+        case EVENTS_FAILURE:
+            return {
+                ...state,
+                isFetching: false,
+                isFail: true,
             };
         default:
             return state;
@@ -23,10 +34,7 @@ const reducer = (state = {items: [], isFetching: false}, action) => {
 };
 export default reducer;
 
-export const requestEvents = () => ({type: EVENTS_REQUEST});
-export const receiveEvents = (items, nextPageUrl) => ({type: EVENTS_RECEIVE, nextPageUrl: nextPageUrl, receivedAt: Date.now(), items});
-
-export const fetchEvents = (username, nextPageUrl) => {
+export const listEvents = (username, nextPageUrl) => {
     return (dispatch, getState) => {
         const account = getState().settings.account;
         if (!account.url || !account.token) {
@@ -37,30 +45,79 @@ export const fetchEvents = (username, nextPageUrl) => {
             return;
         }
         dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
-        dispatch(requestEvents());
-        return fetch(nextPageUrl || 'https://' + account.url + '/users/' + username + '/events', {
+
+        const url = nextPageUrl || 'https://' + account.url + '/users/' + username + '/events';
+        dispatch(fetchEvents(url, account.token));
+    };
+};
+
+const fetchEvents = (url, token) => {
+    return {
+        [CALL_API]: {
+            endpoint: url,
+            method: "GET",
             headers: {
-                'Authorization': 'token ' + account.token,
+                'Authorization': 'token ' + token,
                 'Accept': 'application/vnd.github.html+json',
                 'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                const nextPageUrl = getNextPageUrl(response);
-                return response.json().then(json => {
-                    if (!response.ok) {
-                        return dispatch(notifyMessage({
-                            status: "ERROR",
-                            message: json.message,
-                            notifiedAt: Date.now()
-                        }));
+            },
+            types: [
+                {
+                    type: EVENTS_REQUEST,
+                    meta: {
+                        [pendingTask]: begin
                     }
-                    dispatch(notifyMessage({status: "SUCCESS", message: "Updated!", notifiedAt: Date.now()}));
-                    return dispatch(receiveEvents(json, nextPageUrl))
-                })
-            });
+                }, {
+                    type: EVENTS_RECEIVE,
+                    meta: {
+                        [pendingTask]: end,
+                        receivedAt: Date.now()
+                    }
+                }, {
+                    type: EVENTS_FAILURE,
+                    meta: {
+                        [pendingTask]: endAll
+                    }
+                }]
+        }
     }
 };
+
+// export const fetchEvents = (username, nextPageUrl) => {
+//     return (dispatch, getState) => {
+//         const account = getState().settings.account;
+//         if (!account.url || !account.token) {
+//             return;
+//         }
+//         const events = getState().events;
+//         if (!nextPageUrl && events && events.items && events.items.length > 0) {
+//             return;
+//         }
+//         dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
+//         dispatch(requestEvents());
+//         return fetch(nextPageUrl || 'https://' + account.url + '/users/' + username + '/events', {
+//             headers: {
+//                 'Authorization': 'token ' + account.token,
+//                 'Accept': 'application/vnd.github.html+json',
+//                 'Content-Type': 'application/json'
+//             }
+//         })
+//             .then(response => {
+//                 const nextPageUrl = getNextPageUrl(response);
+//                 return response.json().then(json => {
+//                     if (!response.ok) {
+//                         return dispatch(notifyMessage({
+//                             status: "ERROR",
+//                             message: json.message,
+//                             notifiedAt: Date.now()
+//                         }));
+//                     }
+//                     dispatch(notifyMessage({status: "SUCCESS", message: "Updated!", notifiedAt: Date.now()}));
+//                     return dispatch(receiveEvents(json, nextPageUrl))
+//                 })
+//             });
+//     }
+// };
 
 // Extracts the next page URL from Github API response.
 const getNextPageUrl = response => {

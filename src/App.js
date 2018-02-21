@@ -21,7 +21,7 @@ import {indigo500, indigo300} from "material-ui/styles/colors";
 import * as _ from "lodash";
 import PrivateRoute from "./components/PrivateRoute";
 import {loadSettings} from "./redux/modules/settings";
-import {requestLogin} from "./redux/modules/session";
+import {login} from "./redux/modules/session";
 import {notifyMessage, openAppDrawer} from "./redux/modules/app";
 
 
@@ -41,8 +41,13 @@ class App extends React.Component {
     componentWillMount() {
         const { settings, actions } = this.props;
         actions.loadSettings();
-        this.getTheme(settings.darkMode)
+        this.getTheme(settings.darkMode);
+        // actions.login(settings.account);
     }
+
+    // componentDidMount() {
+    //     this.props.actions.login(this.props.settings.account);
+    // }
 
     componentWillReceiveProps(nextProps) {
         this.getTheme(nextProps.settings.darkMode);
@@ -111,8 +116,10 @@ class App extends React.Component {
                             {app.notification.START &&
                                 <LinearProgress mode="indeterminate"/>
                             }
-                            <PrivateRoute exact path="/" session={session} component={Events}/>
-                            <PrivateRoute path="/event" session={session} component={Events}/>
+                            {/*<PrivateRoute exact path="/" session={session} component={Events}/>*/}
+                            {/*<PrivateRoute path="/event" session={session} component={Events}/>*/}
+                            <Route exact path="/" session={session} component={Events}/>
+                            <Route path="/event" session={session} component={Events}/>
                             <Route path="/settings" component={Settings}/>
                         </div>
                     </Provider>
@@ -130,8 +137,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators({loadSettings, requestLogin,openAppDrawer, notifyMessage }, dispatch),
-    dispatch
+    actions: bindActionCreators({loadSettings, login, openAppDrawer, notifyMessage }, dispatch),
 });
 
 export default withRouter(connect(

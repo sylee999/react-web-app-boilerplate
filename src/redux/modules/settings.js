@@ -4,7 +4,7 @@ export const ACCOUNT_UPDATE = 'boilerplate/app/ACCOUNT_UPDATE';
 export const TOKEN_UPDATE = 'boilerplate/app/TOKEN_UPDATE';
 export const DARK_MODE_UPDATE = 'boilerplate/app/DARK_MODE_UPDATE';
 
-const reducer = (state = {token: "", account:{}, darkMode:false}, action) => {
+const reducer = (state = {account:{}, darkMode:false}, action) => {
     switch (action.type) {
         case TOKEN_UPDATE:
             return {
@@ -37,7 +37,7 @@ export const loadSettings = () => {
 
 const getSettings = () => {
     try {
-        return JSON.parse(localStorage.settings);
+        return JSON.parse(localStorage.settings || "{}");
     } catch (err) {
         console.warn(err);
         return {};
