@@ -6,11 +6,8 @@ import {login} from "../redux/modules/session";
 
 class PrivateRoute extends React.Component {
     componentWillMount() {
-        const { actions, settings, dispatch } = this.props;
+        const { actions, settings } = this.props;
         actions.login(settings.account);
-        // if (this.props && this.props.actions && this.props.actions.login && this.props.settings.account) {
-        //     this.props.actions.login(this.props.settings.account);
-        // }
     }
 
     render() {
@@ -18,7 +15,6 @@ class PrivateRoute extends React.Component {
         return (
             <Route {...rest} render={props => (
                 settings.account.token && !session.isFail ? (
-                // session && ((session.user && session.user.login) || settings.token) ? (
                     <Component {...props}/>
                 ) : (
                     <Redirect to={{

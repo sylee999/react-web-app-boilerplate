@@ -50,17 +50,15 @@ export default reducer;
 export const receiveUser = user => ({ type: USER_RECEIVE, receivedAt: Date.now(), user });
 
 export const login = (account) => {
-    if (!account || !account.url || !account.token) {
-        return;
-    }
-    // return fetchUser(account);
     return (dispatch) => {
+        if (!account || !account.url || !account.token) {
+            return;
+        }
         dispatch(fetchUser(account));
     };
 };
 
 export const logout = () => {
-    // return receiveUser(GUEST_USER);
     return dispatch => {
         dispatch(receiveUser(GUEST_USER));
     }

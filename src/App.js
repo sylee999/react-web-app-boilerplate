@@ -42,12 +42,7 @@ class App extends React.Component {
         const { settings, actions } = this.props;
         actions.loadSettings();
         this.getTheme(settings.darkMode);
-        // actions.login(settings.account);
     }
-
-    // componentDidMount() {
-    //     this.props.actions.login(this.props.settings.account);
-    // }
 
     componentWillReceiveProps(nextProps) {
         this.getTheme(nextProps.settings.darkMode);
@@ -116,10 +111,8 @@ class App extends React.Component {
                             {app.notification.START &&
                                 <LinearProgress mode="indeterminate"/>
                             }
-                            {/*<PrivateRoute exact path="/" session={session} component={Events}/>*/}
-                            {/*<PrivateRoute path="/event" session={session} component={Events}/>*/}
-                            <Route exact path="/" session={session} component={Events}/>
-                            <Route path="/event" session={session} component={Events}/>
+                            <PrivateRoute exact path="/" session={session} component={Events}/>
+                            <PrivateRoute path="/event" session={session} component={Events}/>
                             <Route path="/settings" component={Settings}/>
                         </div>
                     </Provider>
