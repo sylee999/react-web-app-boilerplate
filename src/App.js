@@ -13,7 +13,6 @@ import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import {
     Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper, Snackbar
 } from "material-ui";
-
 import Events from "./containers/Events"
 import Settings from "./containers/Settings"
 import { Provider } from 'react-redux'
@@ -49,7 +48,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { store, app, session, actions } = this.props;
+        const { store, app, session, actions, pendingTasks } = this.props;
         return (
             <MuiThemeProvider muiTheme={this.muiTheme}>
                 <Paper style={{height: "100vh"}}>
@@ -108,12 +107,17 @@ class App extends React.Component {
                     />
                     <Provider store={store}>
                         <div>
-                            {app.notification.START &&
+                            <div>
+                                {/*{app.notification.START &&*/}
+                                {/*<LinearProgress mode="indeterminate"/>*/}
+                                {/*}*/}
+                                {pendingTasks > 0 &&
                                 <LinearProgress mode="indeterminate"/>
-                            }
-                            <PrivateRoute exact path="/" session={session} component={Events}/>
-                            <PrivateRoute path="/event" session={session} component={Events}/>
-                            <Route path="/settings" component={Settings}/>
+                                }
+                                <PrivateRoute exact path="/" session={session} component={Events}/>
+                                <PrivateRoute path="/event" session={session} component={Events}/>
+                                <Route path="/settings" component={Settings}/>
+                            </div>
                         </div>
                     </Provider>
                 </Paper>
@@ -127,6 +131,7 @@ const mapStateToProps = (state, ownProps) => ({
     settings: state.settings,
     session: state.session,
     events: state.events,
+    pendingTasks: state.pendingTasks,
 });
 
 const mapDispatchToProps = dispatch => ({
