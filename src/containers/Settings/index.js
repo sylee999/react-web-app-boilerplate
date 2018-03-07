@@ -2,12 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
-import * as actions from './actions';
 import {
     Avatar, Dialog, Divider, FlatButton, List, ListItem, MenuItem, SelectField, Subheader,
     TextField, Toggle
 } from "material-ui";
 import AccountCircle from "material-ui/svg-icons/action/account-circle";
+import {saveAccount, saveDarkMode} from "../../redux/modules/settings";
+import {login, logout} from "../../redux/modules/session";
+import {setAppMenu} from "../../redux/modules/app";
 
 class Settings extends React.Component {
     constructor(props, context) {
@@ -23,8 +25,7 @@ class Settings extends React.Component {
     }
 
     componentWillMount() {
-        const { actions } = this.props;
-        actions.setAppMenu("Settings");
+        this.props.actions.setAppMenu("Settings");
     }
 
     handleDarkModeToggle = (e, isInputChecked) => {
@@ -58,7 +59,7 @@ class Settings extends React.Component {
     handleAccountDialogSubmit = e => {
         const { actions } = this.props;
         actions.saveAccount(this.state.account);
-        actions.requestLogin(this.state.account);
+        actions.login(this.state.account);
 
         this.handleAccountDialogClose(e);
     };
@@ -148,7 +149,7 @@ const mapStateToProps = (state, ownProps) => ({
     session: state.session
 });
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators({saveDarkMode, saveAccount, login, logout, setAppMenu}, dispatch)
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Settings));

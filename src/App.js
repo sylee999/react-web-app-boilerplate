@@ -3,7 +3,6 @@ import { Route, Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
 
-import * as actions from './actions';
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -12,16 +11,17 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import {
-    Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper,
-    Snackbar
+    Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper, Snackbar
 } from "material-ui";
-
-import Events from "./Events"
-import Settings from "./Settings"
+import Events from "./containers/Events"
+import Settings from "./containers/Settings"
 import { Provider } from 'react-redux'
 import {indigo500, indigo300} from "material-ui/styles/colors";
 import * as _ from "lodash";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./components/PrivateRoute";
+import {loadSettings} from "./redux/modules/settings";
+import {login} from "./redux/modules/session";
+import {notifyMessage, openAppDrawer} from "./redux/modules/app";
 
 
 class App extends React.Component {
@@ -40,11 +40,7 @@ class App extends React.Component {
     componentWillMount() {
         const { settings, actions } = this.props;
         actions.loadSettings();
-        this.getTheme(settings.darkMode)
-    }
-
-    componentDidMount() {
-        this.props.actions.requestLogin();
+        this.getTheme(settings.darkMode);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -52,7 +48,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { store, app, session, actions } = this.props;
+        const { store, app, session, actions, pendingTasks } = this.props;
         return (
             <MuiThemeProvider muiTheme={this.muiTheme}>
                 <Paper style={{height: "100vh"}}>
@@ -111,12 +107,17 @@ class App extends React.Component {
                     />
                     <Provider store={store}>
                         <div>
-                            {app.notification.START &&
+                            <div>
+                                {/*{app.notification.START &&*/}
+                                {/*<LinearProgress mode="indeterminate"/>*/}
+                                {/*}*/}
+                                {pendingTasks > 0 &&
                                 <LinearProgress mode="indeterminate"/>
-                            }
-                            <PrivateRoute exact path="/" session={session} component={Events}/>
-                            <PrivateRoute path="/event" session={session} component={Events}/>
-                            <Route path="/settings" component={Settings}/>
+                                }
+                                <PrivateRoute exact path="/" session={session} component={Events}/>
+                                <PrivateRoute path="/event" session={session} component={Events}/>
+                                <Route path="/settings" component={Settings}/>
+                            </div>
                         </div>
                     </Provider>
                 </Paper>
@@ -130,11 +131,11 @@ const mapStateToProps = (state, ownProps) => ({
     settings: state.settings,
     session: state.session,
     events: state.events,
+    pendingTasks: state.pendingTasks,
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(actions, dispatch),
-    dispatch
+    actions: bindActionCreators({loadSettings, login, openAppDrawer, notifyMessage }, dispatch),
 });
 
 export default withRouter(connect(
