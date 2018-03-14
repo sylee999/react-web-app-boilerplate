@@ -13,16 +13,15 @@ import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import {
     Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper, Snackbar
 } from "material-ui";
-import Events from "./containers/Events"
-import Settings from "./containers/Settings"
+import Events from "../Events/index"
+import Settings from "../Settings/index"
 import { Provider } from 'react-redux'
 import {indigo500, indigo300} from "material-ui/styles/colors";
 import * as _ from "lodash";
-import PrivateRoute from "./components/PrivateRoute";
-import {loadSettings} from "./redux/modules/settings";
-import {login} from "./redux/modules/session";
-import {notifyMessage, openAppDrawer} from "./redux/modules/app";
-
+import PrivateRoute from "../../components/PrivateRoute/index";
+import {loadSettings} from "../Settings/reducer";
+import {login} from "../Session/reducer";
+import {notifyMessage, openAppDrawer} from "./reducer";
 
 class App extends React.Component {
     getTheme(darkMode) {
@@ -107,17 +106,15 @@ class App extends React.Component {
                     />
                     <Provider store={store}>
                         <div>
-                            <div>
-                                {/*{app.notification.START &&*/}
-                                {/*<LinearProgress mode="indeterminate"/>*/}
-                                {/*}*/}
-                                {pendingTasks > 0 &&
-                                <LinearProgress mode="indeterminate"/>
-                                }
-                                <PrivateRoute exact path="/" session={session} component={Events}/>
-                                <PrivateRoute path="/event" session={session} component={Events}/>
-                                <Route path="/settings" component={Settings}/>
-                            </div>
+                            {/*{app.notification.START &&*/}
+                            {/*<LinearProgress mode="indeterminate"/>*/}
+                            {/*}*/}
+                            {pendingTasks > 0 &&
+                            <LinearProgress mode="indeterminate"/>
+                            }
+                            <PrivateRoute exact path="/" session={session} component={Events}/>
+                            <PrivateRoute path="/event" session={session} component={Events}/>
+                            <Route path="/settings" component={Settings}/>
                         </div>
                     </Provider>
                 </Paper>

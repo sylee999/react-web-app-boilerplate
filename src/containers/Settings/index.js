@@ -7,9 +7,9 @@ import {
     TextField, Toggle
 } from "material-ui";
 import AccountCircle from "material-ui/svg-icons/action/account-circle";
-import {saveAccount, saveDarkMode} from "../../redux/modules/settings";
-import {login, logout} from "../../redux/modules/session";
-import {setAppMenu} from "../../redux/modules/app";
+import {saveAccount, saveDarkMode} from "./reducer";
+import {login, logout} from "../Session/reducer";
+import {setAppMenu} from "../App/reducer";
 
 class Settings extends React.Component {
     constructor(props, context) {

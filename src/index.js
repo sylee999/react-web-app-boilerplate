@@ -3,8 +3,8 @@ import {render} from 'react-dom';
 import { HashRouter as Router } from 'react-router-dom'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import configureStore from './redux/configureStore'
-import App from './App';
+import configureStore from './configureStore'
+import App from './containers/App';
 
 injectTapEventPlugin();
 

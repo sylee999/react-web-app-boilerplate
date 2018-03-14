@@ -4,8 +4,8 @@ import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import Event from "./Event";
 import {RaisedButton} from "material-ui";
-import {setAppMenu} from "../../redux/modules/app";
-import {listEvents} from "../../redux/modules/events";
+import {setAppMenu} from "../App/reducer";
+import {listEvents} from "./reducer";
 
 class Events extends React.Component {
     componentWillMount() {

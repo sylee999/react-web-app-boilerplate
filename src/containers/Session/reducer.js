@@ -1,12 +1,12 @@
 import {CALL_API} from "redux-api-middleware";
-import {notifyMessage} from "./app";
-import {saveAccount} from "./settings";
+import {notifyMessage} from "../App/reducer";
+import {saveAccount} from "../Settings/reducer";
 import {
     pendingTask, // The action key for modifying loading state
     begin, // The action value if a "long" running task begun
     end, // The action value if a "long" running task ended
     endAll // The action value if all running tasks must end
-} from "./pendingTask"
+} from "../../components/Indicator/pendingTask"
 
 export const USER_REQUEST = 'boilerplate/app/USER_REQUEST';
 export const USER_RECEIVE = 'boilerplate/app/USER_RECEIVE';

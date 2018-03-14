@@ -1,7 +1,7 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
 import { apiMiddleware } from 'redux-api-middleware';
-import rootReducer from './modules/rootReducer'
+import rootReducer from './rootReducer'
 import {createLogger} from "redux-logger";
 
 const middleware = [ apiMiddleware, thunk, ];
