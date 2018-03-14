@@ -6,7 +6,7 @@ import {
     begin, // The action value if a "long" running task begun
     end, // The action value if a "long" running task ended
     endAll // The action value if all running tasks must end
-} from "../../components/Indicator/pendingTask"
+} from "../Indicator/pendingTask"
 
 export const USER_REQUEST = 'boilerplate/app/USER_REQUEST';
 export const USER_RECEIVE = 'boilerplate/app/USER_RECEIVE';

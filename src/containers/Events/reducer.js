@@ -1,6 +1,6 @@
 import {notifyMessage} from "../App/reducer";
 import {CALL_API} from "redux-api-middleware";
-import {begin, end, endAll, pendingTask} from "../../components/Indicator/pendingTask";
+import {begin, end, endAll, pendingTask} from "../Indicator/pendingTask";
 
 export const EVENTS_REQUEST = 'boilerplate/app/EVENTS_REQUEST';
 export const EVENTS_RECEIVE = 'boilerplate/app/EVENTS_RECEIVE';

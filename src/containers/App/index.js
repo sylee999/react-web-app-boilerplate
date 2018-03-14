@@ -18,7 +18,7 @@ import Settings from "../Settings/index"
 import { Provider } from 'react-redux'
 import {indigo500, indigo300} from "material-ui/styles/colors";
 import * as _ from "lodash";
-import PrivateRoute from "../../components/PrivateRoute/index";
+import PrivateRoute from "../Session/PrivateRoute";
 import {loadSettings} from "../Settings/reducer";
 import {login} from "../Session/reducer";
 import {notifyMessage, openAppDrawer} from "./reducer";
