@@ -11,17 +11,19 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import {
-    Avatar, Dialog, FlatButton, LinearProgress, List, ListItem, Paper, Snackbar
+    Avatar, List, ListItem, Paper
 } from "material-ui";
-import Events from "../Events/index"
-import Settings from "../Settings/index"
+import Events from "../Events"
+import Settings from "../Settings"
+import Indicator from "../Indicator";
 import { Provider } from 'react-redux'
 import {indigo500, indigo300} from "material-ui/styles/colors";
 import * as _ from "lodash";
+import {notifyMessage} from "../Indicator/actions";
 import PrivateRoute from "../Session/PrivateRoute";
 import {loadSettings} from "../Settings/reducer";
 import {login} from "../Session/reducer";
-import {notifyMessage, openAppDrawer} from "./reducer";
+import {openAppDrawer} from "./reducer";
 
 class App extends React.Component {
     getTheme(darkMode) {
@@ -47,7 +49,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { store, app, session, actions, pendingTasks } = this.props;
+        const { store, app, session, actions, indicator } = this.props;
         return (
             <MuiThemeProvider muiTheme={this.muiTheme}>
                 <Paper style={{height: "100vh"}}>
@@ -89,29 +91,9 @@ class App extends React.Component {
                                       containerElement={<Link to='/settings'/>} primaryText="Settings"/>
                         </List>
                     </Drawer>
-                    <Dialog
-                        title="Error!!"
-                        actions={<FlatButton label="Close" primary={true} onClick={() => {actions.notifyMessage({status: "DONE", message:""})}}/>}
-                        modal={false}
-                        open={(app.notification.status === "ERROR")}
-                        onRequestClose={() => {actions.notifyMessage({status: "DONE", message:""})}}
-                    >
-                        {app.notification.message}
-                    </Dialog>
-                    <Snackbar
-                        open={app.notification.status === "SUCCESS"}
-                        autoHideDuration={2000}
-                        message={app.notification.message}
-                        onRequestClose={() => {actions.notifyMessage({status: "DONE", message:""})}}
-                    />
                     <Provider store={store}>
                         <div>
-                            {/*{app.notification.START &&*/}
-                            {/*<LinearProgress mode="indeterminate"/>*/}
-                            {/*}*/}
-                            {pendingTasks > 0 &&
-                            <LinearProgress mode="indeterminate"/>
-                            }
+                            <Indicator />
                             <PrivateRoute exact path="/" session={session} component={Events}/>
                             <PrivateRoute path="/event" session={session} component={Events}/>
                             <Route path="/settings" component={Settings}/>
@@ -128,7 +110,7 @@ const mapStateToProps = (state, ownProps) => ({
     settings: state.settings,
     session: state.session,
     events: state.events,
-    pendingTasks: state.pendingTasks,
+    indicator: state.indicator,
 });
 
 const mapDispatchToProps = dispatch => ({

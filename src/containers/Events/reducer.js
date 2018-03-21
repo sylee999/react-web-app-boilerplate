@@ -1,6 +1,6 @@
-import {notifyMessage} from "../App/reducer";
+import {ACTION_MESSAGE, notifyMessage} from "../Indicator/actions";
 import {CALL_API} from "redux-api-middleware";
-import {begin, end, endAll, pendingTask} from "../Indicator/pendingTask";
+import {TASK_START, TASK_SUCCESS, TASK_ERROR, TASK_CLEAR, ACTION_KEY} from "../Indicator/reducer";
 
 export const EVENTS_REQUEST = 'boilerplate/app/EVENTS_REQUEST';
 export const EVENTS_RECEIVE = 'boilerplate/app/EVENTS_RECEIVE';
@@ -65,18 +65,21 @@ const fetchEvents = (url, token) => {
                 {
                     type: EVENTS_REQUEST,
                     meta: {
-                        [pendingTask]: begin
+                        [ACTION_KEY]: TASK_START
                     }
                 }, {
                     type: EVENTS_RECEIVE,
                     meta: {
-                        [pendingTask]: end,
+                        [ACTION_KEY]: TASK_SUCCESS,
                         receivedAt: Date.now()
                     }
                 }, {
                     type: EVENTS_FAILURE,
-                    meta: {
-                        [pendingTask]: endAll
+                    meta: (action, state, res) => {
+                        return {
+                            [ACTION_KEY]: TASK_ERROR,
+                            [ACTION_MESSAGE]: (res && res.statusText) || "Error"
+                        }
                     }
                 }]
         }

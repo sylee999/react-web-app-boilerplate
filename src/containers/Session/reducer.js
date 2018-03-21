@@ -1,12 +1,6 @@
 import {CALL_API} from "redux-api-middleware";
-import {notifyMessage} from "../App/reducer";
 import {saveAccount} from "../Settings/reducer";
-import {
-    pendingTask, // The action key for modifying loading state
-    begin, // The action value if a "long" running task begun
-    end, // The action value if a "long" running task ended
-    endAll // The action value if all running tasks must end
-} from "../Indicator/pendingTask"
+import {TASK_START, TASK_SUCCESS, TASK_ERROR, TASK_CLEAR, ACTION_KEY} from "../Indicator/reducer";
 
 export const USER_REQUEST = 'boilerplate/app/USER_REQUEST';
 export const USER_RECEIVE = 'boilerplate/app/USER_RECEIVE';
@@ -78,18 +72,18 @@ const fetchUser = (account) => {
                 {
                     type: USER_REQUEST,
                     meta: {
-                        [ pendingTask ]: begin
+                        [ ACTION_KEY ]: TASK_START
                     }
                 }, {
                     type: USER_RECEIVE,
                     meta: {
-                        [ pendingTask ]: end,
+                        [ ACTION_KEY ]: TASK_SUCCESS,
                         receivedAt: Date.now()
                     }
                 }, {
                     type: USER_FAILURE,
                     meta: {
-                        [ pendingTask ]: endAll
+                        [ ACTION_KEY ]: TASK_ERROR
                     }
                 }]
         }

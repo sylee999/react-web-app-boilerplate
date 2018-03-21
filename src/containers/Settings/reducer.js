@@ -1,4 +1,4 @@
-import {notifyMessage} from "../App/reducer";
+import {notifyMessage} from "../Indicator/actions";
 
 export const ACCOUNT_UPDATE = 'boilerplate/app/ACCOUNT_UPDATE';
 export const TOKEN_UPDATE = 'boilerplate/app/TOKEN_UPDATE';
