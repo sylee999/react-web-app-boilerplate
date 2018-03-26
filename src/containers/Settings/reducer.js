@@ -1,4 +1,4 @@
-import {notifyMessage} from "../Indicator/actions";
+import {notifyMessage, STATUS_ERROR} from "../Notification/actions";
 
 export const ACCOUNT_UPDATE = 'boilerplate/app/ACCOUNT_UPDATE';
 export const TOKEN_UPDATE = 'boilerplate/app/TOKEN_UPDATE';
@@ -51,7 +51,7 @@ const saveSettings = settings => {
 export const saveAccount = (account) => {
     return (dispatch, getState) => {
         if (account.token && !/^[a-z0-9]+$/i.test(account.token)) {
-            return notifyMessage({status: "ERROR", message: "Invalid token string.", notifiedAt: Date.now()});
+            return notifyMessage({status: STATUS_ERROR, message: "Invalid token string.", notifiedAt: Date.now()});
         }
         const settings = getState().settings;
         settings.account = account;

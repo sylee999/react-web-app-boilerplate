@@ -1,6 +1,6 @@
 import {CALL_API} from "redux-api-middleware";
+import { pendingTask, begin, end, endAll } from 'react-redux-spinner';
 import {saveAccount} from "../Settings/reducer";
-import {TASK_START, TASK_SUCCESS, TASK_ERROR, TASK_CLEAR, ACTION_KEY} from "../Indicator/reducer";
 
 export const USER_REQUEST = 'boilerplate/app/USER_REQUEST';
 export const USER_RECEIVE = 'boilerplate/app/USER_RECEIVE';
@@ -72,18 +72,18 @@ const fetchUser = (account) => {
                 {
                     type: USER_REQUEST,
                     meta: {
-                        [ ACTION_KEY ]: TASK_START
+                        [ pendingTask  ]: begin
                     }
                 }, {
                     type: USER_RECEIVE,
                     meta: {
-                        [ ACTION_KEY ]: TASK_SUCCESS,
+                        [ pendingTask ]: end,
                         receivedAt: Date.now()
                     }
                 }, {
                     type: USER_FAILURE,
                     meta: {
-                        [ ACTION_KEY ]: TASK_ERROR
+                        [ pendingTask ]: endAll
                     }
                 }]
         }

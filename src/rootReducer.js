@@ -3,15 +3,17 @@ import app from './containers/App/reducer'
 import settings from './containers/Settings/reducer'
 import session from './containers/Session/reducer'
 import events from './containers/Events/reducer'
-import { configurableIndicatorReducer } from './containers/Indicator/reducer';
+import notification from './containers/Notification/reducer';
+import { configurablePendingTasksReducer } from 'react-redux-spinner';
 
-const indicator = configurableIndicatorReducer({ actionKeyPath: [ 'meta' ] });
+const pendingTasks = configurablePendingTasksReducer({ actionKeyPath: [ 'meta' ] });
 const reducers = combineReducers({
     app,
     settings,
     session,
     events,
-    indicator,
+    notification,
+    pendingTasks,
 });
 
 export default reducers;

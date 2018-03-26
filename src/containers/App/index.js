@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Link, withRouter } from 'react-router-dom';
-import { connect } from 'react-redux'
+import { Provider, connect } from 'react-redux'
 import { bindActionCreators } from "redux";
-
+import * as _ from "lodash";
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -11,15 +11,13 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import {
-    Avatar, List, ListItem, Paper
+    Avatar, LinearProgress, List, ListItem, Paper
 } from "material-ui";
+import {indigo500, indigo300} from "material-ui/styles/colors";
+
 import Events from "../Events"
 import Settings from "../Settings"
-import Indicator from "../Indicator";
-import { Provider } from 'react-redux'
-import {indigo500, indigo300} from "material-ui/styles/colors";
-import * as _ from "lodash";
-import {notifyMessage} from "../Indicator/actions";
+import Notification from "../Notification"
 import PrivateRoute from "../Session/PrivateRoute";
 import {loadSettings} from "../Settings/reducer";
 import {login} from "../Session/reducer";
@@ -49,7 +47,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { store, app, session, actions, indicator } = this.props;
+        const { store, app, session, actions, pendingTasks } = this.props;
         return (
             <MuiThemeProvider muiTheme={this.muiTheme}>
                 <Paper style={{height: "100vh"}}>
@@ -93,7 +91,10 @@ class App extends React.Component {
                     </Drawer>
                     <Provider store={store}>
                         <div>
-                            <Indicator />
+                            <Notification />
+                            {pendingTasks > 0 &&
+                            <LinearProgress mode="indeterminate"/>
+                            }
                             <PrivateRoute exact path="/" session={session} component={Events}/>
                             <PrivateRoute path="/event" session={session} component={Events}/>
                             <Route path="/settings" component={Settings}/>
@@ -111,10 +112,11 @@ const mapStateToProps = (state, ownProps) => ({
     session: state.session,
     events: state.events,
     indicator: state.indicator,
+    pendingTasks: state.pendingTasks
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators({loadSettings, login, openAppDrawer, notifyMessage }, dispatch),
+    actions: bindActionCreators({loadSettings, login, openAppDrawer }, dispatch),
 });
 
 export default withRouter(connect(

@@ -1,6 +1,7 @@
-import {ACTION_MESSAGE, notifyMessage} from "../Indicator/actions";
 import {CALL_API} from "redux-api-middleware";
-import {TASK_START, TASK_SUCCESS, TASK_ERROR, TASK_CLEAR, ACTION_KEY} from "../Indicator/reducer";
+import {pendingTask, begin, end, endAll} from 'react-redux-spinner';
+
+import {STATUS_SUCCESS, STATUS_ERROR ,notifyMessage} from "../Notification/actions";
 
 export const EVENTS_REQUEST = 'boilerplate/app/EVENTS_REQUEST';
 export const EVENTS_RECEIVE = 'boilerplate/app/EVENTS_RECEIVE';
@@ -44,14 +45,13 @@ export const listEvents = (username, nextPageUrl) => {
         if (!nextPageUrl && events && events.items && events.items.length > 0) {
             return;
         }
-        dispatch(notifyMessage({status: "START", message: "", notifiedAt: Date.now()}));
 
         const url = nextPageUrl || 'https://' + account.url + '/users/' + username + '/events';
-        dispatch(fetchEvents(url, account.token));
+        dispatch(fetchEvents(url, account.token, dispatch));
     };
 };
 
-const fetchEvents = (url, token) => {
+const fetchEvents = (url, token, dispatch) => {
     return {
         [CALL_API]: {
             endpoint: url,
@@ -65,20 +65,23 @@ const fetchEvents = (url, token) => {
                 {
                     type: EVENTS_REQUEST,
                     meta: {
-                        [ACTION_KEY]: TASK_START
+                        [pendingTask]: begin
                     }
                 }, {
                     type: EVENTS_RECEIVE,
-                    meta: {
-                        [ACTION_KEY]: TASK_SUCCESS,
-                        receivedAt: Date.now()
+                    meta: (action, state, res) => {
+                        dispatch(notifyMessage({status:STATUS_SUCCESS, message: "DONE!" }));
+                        return {
+                            [pendingTask]: end,
+                            receivedAt: Date.now()
+                        }
                     }
                 }, {
                     type: EVENTS_FAILURE,
                     meta: (action, state, res) => {
+                        dispatch(notifyMessage({status:STATUS_ERROR, message: res.statusText }));
                         return {
-                            [ACTION_KEY]: TASK_ERROR,
-                            [ACTION_MESSAGE]: (res && res.statusText) || "Error"
+                            [pendingTask]: endAll,
                         }
                     }
                 }]
