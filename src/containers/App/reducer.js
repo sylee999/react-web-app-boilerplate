@@ -1,5 +1,4 @@
-const APP_MENU = 'boilerplate/app/APP_MENU';
-const APP_DRAWER = 'boilerplate/app/APP_DRAWER';
+import {APP_MENU, APP_DRAWER} from "./actions";
 
 const reducer = (state = {menu: "", drawer: false}, action) => {
     switch (action.type) {
@@ -18,6 +17,3 @@ const reducer = (state = {menu: "", drawer: false}, action) => {
     }
 };
 export default reducer;
-
-export const setAppMenu = menu => ({type: APP_MENU, menu});
-export const openAppDrawer = drawer => ({type: APP_DRAWER, drawer});

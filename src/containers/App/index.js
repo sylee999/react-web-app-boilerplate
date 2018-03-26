@@ -19,9 +19,9 @@ import Events from "../Events"
 import Settings from "../Settings"
 import Notification from "../Notification"
 import PrivateRoute from "../Session/PrivateRoute";
-import {loadSettings} from "../Settings/reducer";
-import {login} from "../Session/reducer";
-import {openAppDrawer} from "./reducer";
+import {loadSettings} from "../Settings/actions";
+import {login} from "../Session/actions";
+import {openAppDrawer} from "./actions";
 
 class App extends React.Component {
     getTheme(darkMode) {
