@@ -1,5 +1,6 @@
-import {CALL_API} from "redux-api-middleware";
+import {CALL_API, getJSON} from "redux-api-middleware";
 import { pendingTask, begin, end, endAll } from 'react-redux-spinner';
+import {notifyMessage, STATUS_ERROR, STATUS_SUCCESS} from "../Notification/actions";
 
 export const USER_REQUEST = 'boilerplate/app/USER_REQUEST';
 export const USER_RECEIVE = 'boilerplate/app/USER_RECEIVE';
@@ -19,7 +20,7 @@ export const login = (account) => {
         if (!account || !account.url || !account.token) {
             return;
         }
-        dispatch(fetchUser(account));
+        dispatch(fetchUser(account, dispatch));
     };
 };
 
@@ -29,7 +30,7 @@ export const logout = () => {
     }
 };
 
-const fetchUser = (account) => {
+const fetchUser = (account, dispatch) => {
     return {
         [CALL_API]: {
             endpoint: 'https://' + account.url + '/user',
@@ -47,14 +48,20 @@ const fetchUser = (account) => {
                     }
                 }, {
                     type: USER_RECEIVE,
-                    meta: {
-                        [ pendingTask ]: end,
-                        receivedAt: Date.now()
+                    meta: (action, state, res) => {
+                        dispatch(notifyMessage({status:STATUS_SUCCESS, message: "Login success!" }));
+                        return {
+                            [pendingTask]: end,
+                            receivedAt: Date.now()
+                        }
                     }
                 }, {
                     type: USER_FAILURE,
-                    meta: {
-                        [ pendingTask ]: endAll
+                    meta: (action, state, res) => {
+                        dispatch(notifyMessage({status:STATUS_ERROR, message: res.statusText }));
+                        return {
+                            [pendingTask]: endAll,
+                        }
                     }
                 }]
         }

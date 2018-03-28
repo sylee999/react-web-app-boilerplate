@@ -67,7 +67,7 @@ class Settings extends React.Component {
     handleAccountDialogLogout = e => {
         const { actions } = this.props;
         actions.saveAccount({});
-        actions.requestLogout();
+        actions.logout();
         this.setState({
             account: {
                 server: "github",

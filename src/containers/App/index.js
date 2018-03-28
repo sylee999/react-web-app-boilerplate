@@ -20,7 +20,6 @@ import Settings from "../Settings"
 import Notification from "../Notification"
 import PrivateRoute from "../Session/PrivateRoute";
 import {loadSettings} from "../Settings/actions";
-import {login} from "../Session/actions";
 import {openAppDrawer} from "./actions";
 
 class App extends React.Component {
@@ -116,7 +115,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators({loadSettings, login, openAppDrawer }, dispatch),
+    actions: bindActionCreators({loadSettings, openAppDrawer }, dispatch),
 });
 
 export default withRouter(connect(
