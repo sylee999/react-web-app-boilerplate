@@ -1,4 +1,4 @@
-import {CALL_API, getJSON} from "redux-api-middleware";
+import {CALL_API} from "redux-api-middleware";
 import { pendingTask, begin, end, endAll } from 'react-redux-spinner';
 import {notifyMessage, STATUS_ERROR, STATUS_SUCCESS} from "../Notification/actions";
 

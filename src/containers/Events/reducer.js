@@ -12,7 +12,7 @@ const reducer = (state = {items: [], isFetching: false}, action) => {
             return {
                 ...state,
                 items: state.items.concat(action.payload),
-                nextPageUrl: action.nextPageUrl,
+                nextPageUrl: action.meta.nextPageUrl,
                 isFetching: true,
                 isFail: false,
             };

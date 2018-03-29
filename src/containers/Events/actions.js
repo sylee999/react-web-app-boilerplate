@@ -45,7 +45,8 @@ const fetchEvents = (url, token, dispatch) => {
                         dispatch(notifyMessage({status:STATUS_SUCCESS, message: "DONE!" }));
                         return {
                             [pendingTask]: end,
-                            receivedAt: Date.now()
+                            receivedAt: Date.now(),
+                            nextPageUrl: getNextPageUrl(res)
                         }
                     }
                 }, {
