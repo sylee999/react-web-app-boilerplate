@@ -102,10 +102,13 @@ class Settings extends React.Component {
                 <Dialog
                     title="Add account"
                     actions={[
-                        <FlatButton label="Cancel" onClick={this.handleAccountDialogClose}></FlatButton>,
-                        <FlatButton label="Submit" primary keyboardFocused
-                                    onClick={this.handleAccountDialogSubmit}></FlatButton>,
-                        <FlatButton label="Logout" secondary onClick={this.handleAccountDialogLogout}></FlatButton>
+                        session && session.user && session.user.login ? (
+                            <FlatButton label="Logout" secondary onClick={this.handleAccountDialogLogout}></FlatButton>
+                            ) : (
+                            <FlatButton label="Login" primary keyboardFocused
+                                        onClick={this.handleAccountDialogSubmit}></FlatButton>
+                        ),
+                        <FlatButton label="Cancel" onClick={this.handleAccountDialogClose}></FlatButton>
                     ]}
                     modal={false}
                     open={this.state.accountDialogOpen}
