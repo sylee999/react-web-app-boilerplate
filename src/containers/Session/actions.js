@@ -13,7 +13,13 @@ export const GUEST_USER = {
     url: '',
 };
 
-export const receiveUser = user => ({ type: USER_RECEIVE, receivedAt: Date.now(), user });
+export const receiveUser = user => ({
+    type: USER_RECEIVE,
+    payload: {user},
+    meta: {
+        receivedAt: Date.now(),
+    }
+});
 
 export const login = (account) => {
     return (dispatch) => {
