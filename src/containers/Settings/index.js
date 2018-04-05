@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
@@ -147,6 +148,19 @@ class Settings extends React.Component {
         );
     }
 }
+
+Settings.propTypes = {
+    settings: PropTypes.object,
+    session: PropTypes.object,
+    actions: PropTypes.shape({
+        saveDarkMode: PropTypes.func,
+        saveAccount: PropTypes.func,
+        login: PropTypes.func,
+        logout: PropTypes.func,
+        setAppMenu: PropTypes.func
+    })
+};
+
 const mapStateToProps = (state, ownProps) => ({
     settings: state.settings,
     session: state.session

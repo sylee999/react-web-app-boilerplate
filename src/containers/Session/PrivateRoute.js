@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
@@ -26,6 +27,14 @@ class PrivateRoute extends React.Component {
         );
     }
 }
+
+PrivateRoute.propTypes = {
+    session: PropTypes.object,
+    settings: PropTypes.object,
+    actions: PropTypes.shape({
+        login: PropTypes.func
+    })
+};
 
 const mapStateToProps = (state, ownProps) => ({
     session: state.session,

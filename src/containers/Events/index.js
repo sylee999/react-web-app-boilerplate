@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
@@ -39,6 +40,15 @@ class Events extends React.Component {
         );
     }
 }
+
+Events.propTypes = {
+    session: PropTypes.object,
+    events: PropTypes.object,
+    actions: PropTypes.shape({
+        setAppMenu: PropTypes.func,
+        listEvents: PropTypes.func
+    })
+};
 
 const mapStateToProps = (state, ownProps) => ({
     session: state.session,

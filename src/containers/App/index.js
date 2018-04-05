@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Route, Link, withRouter } from 'react-router-dom';
 import { Provider, connect } from 'react-redux'
 import { bindActionCreators } from "redux";
@@ -105,12 +106,21 @@ class App extends React.Component {
     }
 }
 
+App.propTypes = {
+    app: PropTypes.object,
+    settings: PropTypes.object,
+    session: PropTypes.object,
+    pendingTasks: PropTypes.number,
+    actions: PropTypes.shape({
+        loadSettings: PropTypes.func,
+        openAppDrawer: PropTypes.func
+    })
+};
+
 const mapStateToProps = (state, ownProps) => ({
     app: state.app,
     settings: state.settings,
     session: state.session,
-    events: state.events,
-    indicator: state.indicator,
     pendingTasks: state.pendingTasks
 });
 

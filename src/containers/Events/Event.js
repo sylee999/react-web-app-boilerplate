@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Avatar, Card, CardHeader, CardText, Chip} from "material-ui";
 
 const Event = ({item}) => {
@@ -37,6 +38,10 @@ const Event = ({item}) => {
             </CardText>
         </Card>
     );
+};
+
+Event.propTypes = {
+    item: PropTypes.object.isRequired
 };
 
 export default Event;
