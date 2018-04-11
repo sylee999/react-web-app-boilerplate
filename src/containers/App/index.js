@@ -1,19 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Route, Link, withRouter } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import { Provider, connect } from 'react-redux'
 import { bindActionCreators } from "redux";
 import * as _ from "lodash";
-import AppBar from 'material-ui/AppBar';
-import Drawer from 'material-ui/Drawer';
-import MenuItem from 'material-ui/MenuItem';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import {
-    Avatar, LinearProgress, List, ListItem, Paper
-} from "material-ui";
+import { LinearProgress, Paper } from "material-ui";
 import {indigo500, indigo300} from "material-ui/styles/colors";
 
 import Events from "../Events"
@@ -22,6 +17,8 @@ import Notification from "../Notification"
 import PrivateRoute from "../Session/PrivateRoute";
 import {loadSettings} from "../Settings/actions";
 import {openAppDrawer} from "./actions";
+import SideMenu from "./SideMenu";
+import Header from "./Header";
 
 class App extends React.Component {
     getTheme(darkMode) {
@@ -51,44 +48,13 @@ class App extends React.Component {
         return (
             <MuiThemeProvider muiTheme={this.muiTheme}>
                 <Paper style={{height: "100vh"}}>
-                    <AppBar
+                    <Header
                         title={app.menu || "Home"}
                         onLeftIconButtonTouchTap={
                             () => actions.openAppDrawer(!app.drawer)
                         }
                     />
-                    <Drawer
-                        docked={false}
-                        open={app.drawer}
-                        onRequestChange={(open) => actions.openAppDrawer(open)}
-                    >
-                        <List style={{
-                            backgroundColor: this.muiTheme.palette.primary1Color,
-                        }}>
-                            <ListItem
-                                style={{
-                                    height: 40
-                                }}
-                                leftAvatar={<Avatar size={60} src={session.user.avatar_url}/>}
-                                disabled
-                            />
-                            <ListItem
-                                primaryText={
-                                    <div style={{color: this.muiTheme.palette.alternateTextColor}}>{session.user.name}</div>
-                                }
-                                secondaryText={
-                                    <span style={{color: this.muiTheme.palette.accent2Color}}>{session.user.login}</span>
-                                }
-                                disabled
-                            />
-                        </List>
-                        <List>
-                            <MenuItem onClick={() => actions.openAppDrawer(false)}
-                                      containerElement={<Link to='/event'/>} primaryText="Events"/>
-                            <MenuItem onClick={() => actions.openAppDrawer(false)}
-                                      containerElement={<Link to='/settings'/>} primaryText="Settings"/>
-                        </List>
-                    </Drawer>
+                    <SideMenu isOpen={app.drawer} session={session} theme={this.muiTheme} openAppDrawer={actions.openAppDrawer}/>
                     <Provider store={store}>
                         <div>
                             <Notification />
