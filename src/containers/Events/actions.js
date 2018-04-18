@@ -24,8 +24,8 @@ export const listEvents = (username, nextPageUrl) => {
 };
 
 const fetchEvents = (url, token) => {
-    return (dispatch, getState) => {
-        return dispatch({
+    return async(dispatch, getState) => {
+        const actionResponse = await dispatch({
             [RSAA]: {
                 endpoint: url,
                 method: "GET",
@@ -60,19 +60,19 @@ const fetchEvents = (url, token) => {
                         }
                     }]
             }
-        }).then(actionResponse => {
-            if (actionResponse.error) {
-                dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
-                dispatch({
-                    type: EVENTS_FAILURE,
-                    meta: {
-                        [pendingTask]: endAll
-                    },
-                });
-            }
+        })
 
-            return actionResponse;
-        });
+        if (actionResponse.error) {
+            dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
+            dispatch({
+                type: EVENTS_FAILURE,
+                meta: {
+                    [pendingTask]: endAll
+                },
+            });
+        }
+
+        return actionResponse;
     }
 };
 

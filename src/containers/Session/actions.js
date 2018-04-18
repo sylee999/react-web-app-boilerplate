@@ -37,8 +37,8 @@ export const logout = () => {
 };
 
 const fetchUser = (account) => {
-    return (dispatch, getState) => {
-        return dispatch({
+    return async(dispatch, getState) => {
+        const actionResponse = await dispatch({
             [RSAA]: {
                 endpoint: 'https://' + account.url + '/user',
                 method: "GET",
@@ -51,12 +51,12 @@ const fetchUser = (account) => {
                     {
                         type: USER_REQUEST,
                         meta: {
-                            [ pendingTask  ]: begin
+                            [pendingTask]: begin
                         }
                     }, {
                         type: USER_RECEIVE,
                         meta: (action, state, res) => {
-                            dispatch(notifyMessage({status:STATUS_SUCCESS, message: "Login success!" }));
+                            dispatch(notifyMessage({status: STATUS_SUCCESS, message: "Login success!"}));
                             return {
                                 [pendingTask]: end,
                                 receivedAt: Date.now()
@@ -65,25 +65,25 @@ const fetchUser = (account) => {
                     }, {
                         type: USER_FAILURE,
                         meta: (action, state, res) => {
-                            dispatch(notifyMessage({status:STATUS_ERROR, message: res.statusText }));
+                            dispatch(notifyMessage({status: STATUS_ERROR, message: res.statusText}));
                             return {
                                 [pendingTask]: endAll,
                             }
                         },
                     }]
             }
-        }).then(actionResponse => {
-            if (actionResponse.error) {
-                dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
-                dispatch({
-                    type: USER_FAILURE,
-                    meta: {
-                        [pendingTask]: endAll
-                    },
-                });
-            }
-
-            return actionResponse;
         });
+
+        if (actionResponse.error) {
+            dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
+            dispatch({
+                type: USER_FAILURE,
+                meta: {
+                    [pendingTask]: endAll
+                },
+            });
+        }
+
+        return actionResponse;
     };
 };
