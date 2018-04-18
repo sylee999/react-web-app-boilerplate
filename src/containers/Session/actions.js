@@ -1,6 +1,6 @@
 import {RSAA} from "redux-api-middleware";
 import { pendingTask, begin, end, endAll } from 'react-redux-spinner';
-import {notifyMessage, STATUS_ERROR, STATUS_SUCCESS} from "../Notification/actions";
+import {NOTIFICATION, STATUS_ERROR, STATUS_SUCCESS} from "../Notification/actions";
 
 export const USER_REQUEST = 'boilerplate/app/USER_REQUEST';
 export const USER_RECEIVE = 'boilerplate/app/USER_RECEIVE';
@@ -55,31 +55,27 @@ const fetchUser = (account) => {
                         }
                     }, {
                         type: USER_RECEIVE,
-                        meta: (action, state, res) => {
-                            dispatch(notifyMessage({status: STATUS_SUCCESS, message: "Login success!"}));
-                            return {
-                                [pendingTask]: end,
-                                receivedAt: Date.now()
-                            }
-                        }
+                        meta: {
+                            [pendingTask]: end,
+                            [NOTIFICATION]: {status: STATUS_SUCCESS, message: "DONE!"},
+                            receivedAt: Date.now()
+                        },
                     }, {
                         type: USER_FAILURE,
-                        meta: (action, state, res) => {
-                            dispatch(notifyMessage({status: STATUS_ERROR, message: res.statusText}));
-                            return {
-                                [pendingTask]: endAll,
-                            }
+                        meta: {
+                            [pendingTask]: endAll,
+                            [NOTIFICATION]: {status: STATUS_SUCCESS, message: "DONE!"},
                         },
                     }]
             }
         });
 
         if (actionResponse.error) {
-            dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
             dispatch({
                 type: USER_FAILURE,
                 meta: {
-                    [pendingTask]: endAll
+                    [pendingTask]: endAll,
+                    [NOTIFICATION]: {status: STATUS_ERROR, message: actionResponse.payload.message},
                 },
             });
         }

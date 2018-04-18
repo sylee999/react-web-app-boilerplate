@@ -1,7 +1,7 @@
 import {RSAA} from "redux-api-middleware";
 import {pendingTask, begin, end, endAll} from 'react-redux-spinner';
 
-import {STATUS_SUCCESS, STATUS_ERROR ,notifyMessage} from "../Notification/actions";
+import {STATUS_SUCCESS, STATUS_ERROR, NOTIFICATION} from "../Notification/actions";
 
 export const EVENTS_REQUEST = 'boilerplate/app/EVENTS_REQUEST';
 export const EVENTS_RECEIVE = 'boilerplate/app/EVENTS_RECEIVE';
@@ -43,9 +43,9 @@ const fetchEvents = (url, token) => {
                     }, {
                         type: EVENTS_RECEIVE,
                         meta: (action, state, res) => {
-                            dispatch(notifyMessage({status: STATUS_SUCCESS, message: "DONE!"}));
                             return {
                                 [pendingTask]: end,
+                                [NOTIFICATION]: {status: STATUS_SUCCESS, message: "DONE!"},
                                 receivedAt: Date.now(),
                                 nextPageUrl: getNextPageUrl(res)
                             }
@@ -53,21 +53,21 @@ const fetchEvents = (url, token) => {
                     }, {
                         type: EVENTS_FAILURE,
                         meta: (action, state, res) => {
-                            dispatch(notifyMessage({status: STATUS_ERROR, message: res.statusText}));
                             return {
                                 [pendingTask]: endAll,
+                                [NOTIFICATION]: {status: STATUS_ERROR, message: res.statusText},
                             }
                         }
                     }]
             }
-        })
+        });
 
         if (actionResponse.error) {
-            dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
             dispatch({
                 type: EVENTS_FAILURE,
                 meta: {
-                    [pendingTask]: endAll
+                    [pendingTask]: endAll,
+                    [NOTIFICATION]:{status: STATUS_ERROR, message: actionResponse.payload.message},
                 },
             });
         }
