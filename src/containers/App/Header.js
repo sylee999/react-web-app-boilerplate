@@ -12,10 +12,8 @@ const Header = ({title, onLeftIconButtonTouchTap}) => {
 };
 
 Header.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    session: PropTypes.object.isRequired,
-    theme: PropTypes.object.isRequired,
-    openAppDrawer: PropTypes.func.isRequired
+    title: PropTypes.string.isRequired,
+    onLeftIconButtonTouchTap: PropTypes.func.isRequired
 };
 
 export default Header;

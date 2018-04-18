@@ -1,4 +1,4 @@
-import {CALL_API} from "redux-api-middleware";
+import {RSAA} from "redux-api-middleware";
 import { pendingTask, begin, end, endAll } from 'react-redux-spinner';
 import {notifyMessage, STATUS_ERROR, STATUS_SUCCESS} from "../Notification/actions";
 
@@ -26,7 +26,7 @@ export const login = (account) => {
         if (!account || !account.url || !account.token) {
             return;
         }
-        dispatch(fetchUser(account, dispatch));
+        dispatch(fetchUser(account));
     };
 };
 
@@ -36,40 +36,54 @@ export const logout = () => {
     }
 };
 
-const fetchUser = (account, dispatch) => {
-    return {
-        [CALL_API]: {
-            endpoint: 'https://' + account.url + '/user',
-            method: "GET",
-            headers: {
-                'Authorization': 'token ' + account.token,
-                'Accept': 'application/vnd.github.html+json',
-                'Content-Type': 'application/json'
-            },
-            types: [
-                {
-                    type: USER_REQUEST,
-                    meta: {
-                        [ pendingTask  ]: begin
-                    }
-                }, {
-                    type: USER_RECEIVE,
-                    meta: (action, state, res) => {
-                        dispatch(notifyMessage({status:STATUS_SUCCESS, message: "Login success!" }));
-                        return {
-                            [pendingTask]: end,
-                            receivedAt: Date.now()
+const fetchUser = (account) => {
+    return (dispatch, getState) => {
+        return dispatch({
+            [RSAA]: {
+                endpoint: 'https://' + account.url + '/user',
+                method: "GET",
+                headers: {
+                    'Authorization': 'token ' + account.token,
+                    'Accept': 'application/vnd.github.html+json',
+                    'Content-Type': 'application/json'
+                },
+                types: [
+                    {
+                        type: USER_REQUEST,
+                        meta: {
+                            [ pendingTask  ]: begin
                         }
-                    }
-                }, {
+                    }, {
+                        type: USER_RECEIVE,
+                        meta: (action, state, res) => {
+                            dispatch(notifyMessage({status:STATUS_SUCCESS, message: "Login success!" }));
+                            return {
+                                [pendingTask]: end,
+                                receivedAt: Date.now()
+                            }
+                        }
+                    }, {
+                        type: USER_FAILURE,
+                        meta: (action, state, res) => {
+                            dispatch(notifyMessage({status:STATUS_ERROR, message: res.statusText }));
+                            return {
+                                [pendingTask]: endAll,
+                            }
+                        },
+                    }]
+            }
+        }).then(actionResponse => {
+            if (actionResponse.error) {
+                dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
+                dispatch({
                     type: USER_FAILURE,
-                    meta: (action, state, res) => {
-                        dispatch(notifyMessage({status:STATUS_ERROR, message: res.statusText }));
-                        return {
-                            [pendingTask]: endAll,
-                        }
-                    }
-                }]
-        }
+                    meta: {
+                        [pendingTask]: endAll
+                    },
+                });
+            }
+
+            return actionResponse;
+        });
     };
 };

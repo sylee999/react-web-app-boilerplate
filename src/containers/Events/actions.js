@@ -1,4 +1,4 @@
-import {CALL_API} from "redux-api-middleware";
+import {RSAA} from "redux-api-middleware";
 import {pendingTask, begin, end, endAll} from 'react-redux-spinner';
 
 import {STATUS_SUCCESS, STATUS_ERROR ,notifyMessage} from "../Notification/actions";
@@ -19,46 +19,60 @@ export const listEvents = (username, nextPageUrl) => {
         }
 
         const url = nextPageUrl || 'https://' + account.url + '/users/' + username + '/events';
-        dispatch(fetchEvents(url, account.token, dispatch));
+        dispatch(fetchEvents(url, account.token));
     };
 };
 
-const fetchEvents = (url, token, dispatch) => {
-    return {
-        [CALL_API]: {
-            endpoint: url,
-            method: "GET",
-            headers: {
-                'Authorization': 'token ' + token,
-                'Accept': 'application/vnd.github.html+json',
-                'Content-Type': 'application/json'
-            },
-            types: [
-                {
-                    type: EVENTS_REQUEST,
-                    meta: {
-                        [pendingTask]: begin
-                    }
-                }, {
-                    type: EVENTS_RECEIVE,
-                    meta: (action, state, res) => {
-                        dispatch(notifyMessage({status:STATUS_SUCCESS, message: "DONE!" }));
-                        return {
-                            [pendingTask]: end,
-                            receivedAt: Date.now(),
-                            nextPageUrl: getNextPageUrl(res)
+const fetchEvents = (url, token) => {
+    return (dispatch, getState) => {
+        return dispatch({
+            [RSAA]: {
+                endpoint: url,
+                method: "GET",
+                headers: {
+                    'Authorization': 'token ' + token,
+                    'Accept': 'application/vnd.github.html+json',
+                    'Content-Type': 'application/json'
+                },
+                types: [
+                    {
+                        type: EVENTS_REQUEST,
+                        meta: {
+                            [pendingTask]: begin
                         }
-                    }
-                }, {
+                    }, {
+                        type: EVENTS_RECEIVE,
+                        meta: (action, state, res) => {
+                            dispatch(notifyMessage({status: STATUS_SUCCESS, message: "DONE!"}));
+                            return {
+                                [pendingTask]: end,
+                                receivedAt: Date.now(),
+                                nextPageUrl: getNextPageUrl(res)
+                            }
+                        }
+                    }, {
+                        type: EVENTS_FAILURE,
+                        meta: (action, state, res) => {
+                            dispatch(notifyMessage({status: STATUS_ERROR, message: res.statusText}));
+                            return {
+                                [pendingTask]: endAll,
+                            }
+                        }
+                    }]
+            }
+        }).then(actionResponse => {
+            if (actionResponse.error) {
+                dispatch(notifyMessage({status: STATUS_ERROR, message: actionResponse.payload.message}));
+                dispatch({
                     type: EVENTS_FAILURE,
-                    meta: (action, state, res) => {
-                        dispatch(notifyMessage({status:STATUS_ERROR, message: res.statusText }));
-                        return {
-                            [pendingTask]: endAll,
-                        }
-                    }
-                }]
-        }
+                    meta: {
+                        [pendingTask]: endAll
+                    },
+                });
+            }
+
+            return actionResponse;
+        });
     }
 };
 
