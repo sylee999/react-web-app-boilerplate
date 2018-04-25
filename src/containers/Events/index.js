@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import Event from "./Event";
-import {RaisedButton} from "material-ui";
+import {Button} from "material-ui";
 import {setAppMenu} from "../App/actions";
 import {listEvents} from "./actions";
 
@@ -30,11 +30,11 @@ class Events extends React.Component {
             <div>
                 {events.items.map((item, i) => <Event item={item} key={item.id}/>)}
                 {(events.items && events.items.length > 0) &&
-                    <RaisedButton fullWidth={true} onClick={(e) => {
+                    <Button variant="raised" fullWidth={true} onClick={(e) => {
                         actions.listEvents(session.user.login, events.nextPageUrl)
                     }} disabled={!events.nextPageUrl}>
                         MORE
-                    </RaisedButton>
+                    </Button>
                 }
             </div>
         );

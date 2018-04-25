@@ -78,15 +78,15 @@ const fetchEvents = (url, token) => {
 
 // Extracts the next page URL from Github API response.
 const getNextPageUrl = response => {
-    const link = response.headers.get('link')
+    const link = response.headers.get('link');
     if (!link) {
         return null
     }
 
-    const nextLink = link.split(',').find(s => s.indexOf('rel="next"') > -1)
+    const nextLink = link.split(',').find(s => s.indexOf('rel="next"') > -1);
     if (!nextLink) {
         return null
     }
 
-    return nextLink.split(';')[0].slice(1, -1)
+    return nextLink.trim().split(';')[0].slice(1, -1)
 };

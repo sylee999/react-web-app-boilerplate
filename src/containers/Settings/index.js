@@ -3,11 +3,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
+import List, { ListItem, ListItemIcon, ListItemText, ListSubheader } from 'material-ui/List';
 import {
-    Avatar, Dialog, Divider, FlatButton, List, ListItem, MenuItem, SelectField, Subheader,
-    TextField, Toggle
+    Avatar,
+    Dialog,
+    Divider,
+    Button,
+    TextField,
+    Switch,
+    DialogTitle,
+    DialogContent,
+    DialogActions, DialogContentText, MenuItem, FormControlLabel
 } from "material-ui";
-import AccountCircle from "material-ui/svg-icons/action/account-circle";
+import {ColorLens, AccountCircle} from '@material-ui/icons';
 import {saveAccount, saveDarkMode} from "./actions";
 import {login, logout} from "../Session/actions";
 import {setAppMenu} from "../App/actions";
@@ -84,65 +92,96 @@ class Settings extends React.Component {
         const { session, settings } = this.props;
         return (
             <div>
-                <List>
-                    <Subheader>Accounts</Subheader>
+                <List
+                    component="nav"
+                    subheader={<ListSubheader component="div">Accounts</ListSubheader>}
+                >
                     { session && session.user && session.user.login ? (
-                        <ListItem primaryText={session.user.name} leftIcon={<Avatar src={session.user.avatar_url}/>}
-                                  onClick={this.handleAccountDialogOpen}/>
+                        <ListItem button onClick={this.handleAccountDialogOpen}>
+                            <ListItemIcon>
+                                <Avatar src={session.user.avatar_url}/>
+                            </ListItemIcon>
+                            <ListItemText primary={session.user.name} />
+                        </ListItem>
                         ) : (
-                        <ListItem primaryText="Add account" leftIcon={<AccountCircle/>}
-                                  onClick={this.handleAccountDialogOpen}/>
+                        <ListItem button onClick={this.handleAccountDialogOpen}>
+                            <ListItemIcon>
+                                <AccountCircle/>
+                            </ListItemIcon>
+                            <ListItemText primary="Add account" />
+                        </ListItem>
                         )
                     }
-                    <Divider/>
-                    <Subheader>Appearances</Subheader>
-                    <ListItem primaryText="Dark mode" rightToggle={
-                        <Toggle onToggle={this.handleDarkModeToggle} toggled={settings.darkMode}/>
-                    }/>
+                </List>
+                <Divider/>
+                <List
+                    component="nav"
+                    subheader={<ListSubheader component="div">Appearances</ListSubheader>}
+                >
+                    <ListItem>
+                        <ListItemIcon>
+                            <ColorLens/>
+                        </ListItemIcon>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={settings.darkMode}
+                                    onChange={this.handleDarkModeToggle}
+                                />
+                            }
+                            label="Dark mode"
+                        />
+                    </ListItem>
                 </List>
                 <Dialog
-                    title="Add account"
-                    actions={[
-                        session && session.user && session.user.login ? (
-                            <FlatButton label="Logout" secondary onClick={this.handleAccountDialogLogout}></FlatButton>
-                            ) : (
-                            <FlatButton label="Login" primary keyboardFocused
-                                        onClick={this.handleAccountDialogSubmit}></FlatButton>
-                        ),
-                        <FlatButton label="Cancel" onClick={this.handleAccountDialogClose}></FlatButton>
-                    ]}
-                    modal={false}
                     open={this.state.accountDialogOpen}
-                    onRequestClose={this.handleAccountDialogClose}
+                    onClose={this.handleAccountDialogClose}
                 >
-                    <SelectField
-                        floatingLabelText="Github Server"
-                        value={this.state.account.server}
-                        onChange={this.handleAccountServerChange}
-                        fullWidth
-                    >
-                        <MenuItem value="github" primaryText="api.github.com"/>
-                        <MenuItem value="enterprise" primaryText="Github Enterprise"/>
-                    </SelectField>
-                    <br/>
-                    <TextField
-                        floatingLabelText="Github Enterprise URL"
-                        hintText="http://your.domain/v3/"
-                        onChange={this.handleAccountUrlChange}
-                        floatingLabelFixed
-                        fullWidth
-                        value={this.state.account.url}
-                        disabled={this.state.account.server === "github"}
-                    />
-                    <br/>
-                    <TextField
-                        hintText="Github Personal Access Token"
-                        floatingLabelText="Personal Access Token"
-                        onChange={this.handleAccountTokenChange}
-                        floatingLabelFixed
-                        fullWidth
-                        value={this.state.account.token}
-                    /><br/>
+                    <DialogTitle>Set account</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                        </DialogContentText>
+                        <form noValidate autoComplete="off">
+                            <TextField
+                                select
+                                label="Github Server"
+                                value={this.state.account.server}
+                                onChange={this.handleAccountServerChange}
+                                fullWidth
+                                margin="normal"
+                            >
+                                <MenuItem value="github">api.github.com</MenuItem>
+                                <MenuItem value="enterprise">Github Enterprise</MenuItem>
+                            </TextField>
+                            <TextField
+                                label="Github Enterprise URL"
+                                placeholder="http://your.domain/v3/"
+                                onChange={this.handleAccountUrlChange}
+                                value={this.state.account.url}
+                                disabled={this.state.account.server === "github"}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                label="Github Personal Access Token"
+                                placeholder="Personal Access Token"
+                                onChange={this.handleAccountTokenChange}
+                                value={this.state.account.token}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </form>
+                    </DialogContent>
+                    <DialogActions>
+                        {
+                            session && session.user && session.user.login ? (
+                                <Button color="secondary" onClick={this.handleAccountDialogLogout}>Logout</Button>
+                            ) : (
+                                <Button color="primary" keyboardFocused onClick={this.handleAccountDialogSubmit}>Login</Button>
+                            )
+                        }
+                        <Button onClick={this.handleAccountDialogClose}>Cancel</Button>
+                    </DialogActions>
                 </Dialog>
             </div>
         );

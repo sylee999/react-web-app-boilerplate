@@ -3,13 +3,8 @@ import PropTypes from 'prop-types';
 import { Route, withRouter } from 'react-router-dom';
 import { Provider, connect } from 'react-redux'
 import { bindActionCreators } from "redux";
-import * as _ from "lodash";
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import { LinearProgress, Paper } from "material-ui";
-import {indigo500, indigo300} from "material-ui/styles/colors";
 
 import Events from "../Events"
 import Settings from "../Settings"
@@ -22,15 +17,12 @@ import Header from "./Header";
 
 class App extends React.Component {
     getTheme(darkMode) {
-        const theme = darkMode ? darkBaseTheme : lightBaseTheme;
-        this.muiTheme = getMuiTheme(_.merge(theme,
-            {
-                palette: {
-                    primary1Color: indigo300,
-                    primary2Color: indigo500,
-                    pickerHeaderColor: indigo300,
-                }
-            }));
+        const mode = darkMode ? 'dark' : 'light';
+        this.theme = createMuiTheme({
+            palette: {
+                type: mode,
+            },
+        });
     }
 
     componentWillMount() {
@@ -46,7 +38,7 @@ class App extends React.Component {
     render() {
         const { store, app, session, actions, pendingTasks } = this.props;
         return (
-            <MuiThemeProvider muiTheme={this.muiTheme}>
+            <MuiThemeProvider theme={this.theme}>
                 <Paper style={{height: "100vh"}}>
                     <Header
                         title={app.menu || "Home"}
@@ -54,7 +46,7 @@ class App extends React.Component {
                             () => actions.openAppDrawer(!app.drawer)
                         }
                     />
-                    <SideMenu isOpen={app.drawer} session={session} theme={this.muiTheme} openAppDrawer={actions.openAppDrawer}/>
+                    <SideMenu isOpen={app.drawer} session={session} openAppDrawer={actions.openAppDrawer}/>
                     <Provider store={store}>
                         <div>
                             <Notification />
