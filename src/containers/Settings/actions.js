@@ -1,31 +1,8 @@
-import {notifyMessage} from "./app";
+import {notifyMessage, STATUS_ERROR} from "../Notification/actions";
 
 export const ACCOUNT_UPDATE = 'boilerplate/app/ACCOUNT_UPDATE';
 export const TOKEN_UPDATE = 'boilerplate/app/TOKEN_UPDATE';
 export const DARK_MODE_UPDATE = 'boilerplate/app/DARK_MODE_UPDATE';
-
-const reducer = (state = {account:{}, darkMode:false}, action) => {
-    switch (action.type) {
-        case TOKEN_UPDATE:
-            return {
-                ...state,
-                token: action.token
-            };
-        case ACCOUNT_UPDATE:
-            return {
-                ...state,
-                account: action.account
-            };
-        case DARK_MODE_UPDATE:
-            return {
-                ...state,
-                darkMode: action.darkMode
-            };
-        default:
-            return state;
-    }
-};
-export default reducer;
 
 export const loadSettings = () => {
     return dispatch => {
@@ -51,7 +28,7 @@ const saveSettings = settings => {
 export const saveAccount = (account) => {
     return (dispatch, getState) => {
         if (account.token && !/^[a-z0-9]+$/i.test(account.token)) {
-            return notifyMessage({status: "ERROR", message: "Invalid token string.", notifiedAt: Date.now()});
+            return notifyMessage({status: STATUS_ERROR, message: "Invalid token string.", notifiedAt: Date.now()});
         }
         const settings = getState().settings;
         settings.account = account;
