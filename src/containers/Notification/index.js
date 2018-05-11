@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
@@ -40,13 +39,6 @@ class Notification extends Component {
         )
     }
 }
-
-Notification.propTypes = {
-    notification: PropTypes.object,
-    actions: PropTypes.shape({
-        notifyMessage: PropTypes.func
-    })
-};
 
 const mapStateToProps = (state, ownProps) => ({
     notification: state.notification,

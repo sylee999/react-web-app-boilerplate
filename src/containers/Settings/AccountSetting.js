@@ -71,7 +71,7 @@ class AccountSetting extends React.Component {
     };
 
     render() {
-        const { session, settings } = this.props;
+        const { session } = this.props;
         return (
             <div>
                 { session && session.user && session.user.login ? (
@@ -101,7 +101,7 @@ class AccountSetting extends React.Component {
                             <TextField
                                 select
                                 label="Github Server"
-                                value={settings.account.server}
+                                value={this.state.account.server}
                                 onChange={this.handleAccountServerChange}
                                 fullWidth
                                 margin="normal"
@@ -113,8 +113,8 @@ class AccountSetting extends React.Component {
                                 label="Github Enterprise URL"
                                 placeholder="http://your.domain/v3/"
                                 onChange={this.handleAccountUrlChange}
-                                value={settings.account.url}
-                                disabled={settings.account.server === "github"}
+                                value={this.state.account.url}
+                                disabled={this.state.account.server === "github"}
                                 fullWidth
                                 margin="normal"
                             />
@@ -122,7 +122,7 @@ class AccountSetting extends React.Component {
                                 label="Github Personal Access Token"
                                 placeholder="Personal Access Token"
                                 onChange={this.handleAccountTokenChange}
-                                value={settings.account.token}
+                                value={this.state.account.token}
                                 fullWidth
                                 margin="normal"
                             />
