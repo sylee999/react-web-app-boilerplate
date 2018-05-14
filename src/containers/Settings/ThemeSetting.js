@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {
     ListItem, ListItemIcon, FormControlLabel, Switch
-} from "material-ui";
+} from "@material-ui/core";
 import {ColorLens} from '@material-ui/icons';
 import {saveDarkMode} from "./actions";
 

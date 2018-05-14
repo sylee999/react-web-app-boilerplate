@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar} from "material-ui";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar} from "@material-ui/core";
 import {STATUS_SUCCESS, STATUS_ERROR, STATUS_CLEAR, notifyMessage} from "./actions";
 
 class Notification extends Component {

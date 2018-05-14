@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, Card, CardHeader, CardContent, Chip, IconButton, Collapse} from "material-ui";
+import {Avatar, Card, CardHeader, CardContent, Chip, IconButton, Collapse} from "@material-ui/core";
 import {ExpandMore, ExpandLess} from "@material-ui/icons";
 
 class Event extends React.Component {

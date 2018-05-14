@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import {
     Divider, List, ListSubheader,
-} from "material-ui";
+} from "@material-ui/core";
 import {setAppMenu} from "../App/actions";
 import AccountSetting from "./AccountSetting";
 import ThemeSetting from "./ThemeSetting";

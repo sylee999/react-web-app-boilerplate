@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Route, withRouter } from 'react-router-dom';
 import { Provider, connect } from 'react-redux'
 import { bindActionCreators } from "redux";
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import { LinearProgress, Paper } from "material-ui";
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { LinearProgress, Paper } from "@material-ui/core";
 
 import Events from "../Events"
 import Settings from "../Settings"

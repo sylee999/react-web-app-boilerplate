@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import Event from "./Event";
-import {Button} from "material-ui";
+import {Button} from "@material-ui/core";
 import {setAppMenu} from "../App/actions";
 import {listEvents} from "./actions";
 

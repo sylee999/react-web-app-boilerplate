@@ -10,7 +10,7 @@ import {
     ListItemText,
     Typography,
     withStyles,
-} from "material-ui";
+} from "@material-ui/core";
 import { InfoOutline, Settings } from '@material-ui/icons';
 
 const styles = theme => ({

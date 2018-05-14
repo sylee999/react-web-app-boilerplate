@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import {
     Dialog, Button, TextField, DialogTitle, DialogContent,
     DialogActions, DialogContentText, MenuItem, ListItem, ListItemIcon, Avatar, ListItemText
-} from "material-ui";
+} from "@material-ui/core";
 import {AccountCircle} from '@material-ui/icons';
 import {login, logout} from "../Session/actions";
 import {saveAccount} from "./actions";
