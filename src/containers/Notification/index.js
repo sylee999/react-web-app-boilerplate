@@ -14,6 +14,7 @@ class Notification extends Component {
                     <div>
                         <Dialog
                             open={(notification.status === STATUS_ERROR)}
+                            fullWidth
                             modal={false}
                             onClose={() => {actions.notifyMessage({status: STATUS_CLEAR})}}
                         >
@@ -24,7 +25,9 @@ class Notification extends Component {
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
-                                <Button label="Close" color="primary" onClick={() => {actions.notifyMessage({status: STATUS_CLEAR})}} autoFocus/>
+                                <Button color="primary" onClick={() => {actions.notifyMessage({status: STATUS_CLEAR})}} autoFocus>
+                                    Close
+                                </Button>
                             </DialogActions>
                         </Dialog>
                         <Snackbar
