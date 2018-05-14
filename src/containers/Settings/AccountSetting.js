@@ -23,20 +23,22 @@ class AccountSetting extends React.Component {
         };
     }
 
-    handleAccountServerChange = (event, index, value) => {
-        const serverAndUrl = {server: value};
-        if ("github" === value) {
+    handleAccountServerChange = (event) => {
+        const serverAndUrl = {server: event.target.value};
+        if ("github" === event.target.value) {
             serverAndUrl.url = "api.github.com";
         }
         this.setState((prevState) => ({account: { ...prevState.account, ...serverAndUrl}}));
     };
 
-    handleAccountUrlChange = (event, value) => {
-        this.setState((prevState) => ({account: { ...prevState.account, url: value}}));
+    handleAccountUrlChange = (event) => {
+        const url = event.target.value;
+        this.setState((prevState) => ({account: { ...prevState.account, url: url}}));
     };
 
-    handleAccountTokenChange = (event, value) => {
-        this.setState((prevState) => ({account: { ...prevState.account, token: value}}));
+    handleAccountTokenChange = (event) => {
+        const token = event.target.value;
+        this.setState((prevState) => ({account: { ...prevState.account, token: token}}));
     };
 
     handleAccountDialogOpen = e => {
@@ -71,7 +73,7 @@ class AccountSetting extends React.Component {
     };
 
     render() {
-        const { session, settings } = this.props;
+        const { session } = this.props;
         return (
             <div>
                 { session && session.user && session.user.login ? (
@@ -92,48 +94,47 @@ class AccountSetting extends React.Component {
                 <Dialog
                     open={this.state.accountDialogOpen}
                     onClose={this.handleAccountDialogClose}
+                    fullWidth
                 >
                     <DialogTitle>Set account</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                         </DialogContentText>
-                        <form noValidate autoComplete="off">
-                            <TextField
-                                select
-                                label="Github Server"
-                                value={settings.account.server}
-                                onChange={this.handleAccountServerChange}
-                                fullWidth
-                                margin="normal"
-                            >
-                                <MenuItem value="github">api.github.com</MenuItem>
-                                <MenuItem value="enterprise">Github Enterprise</MenuItem>
-                            </TextField>
-                            <TextField
-                                label="Github Enterprise URL"
-                                placeholder="http://your.domain/v3/"
-                                onChange={this.handleAccountUrlChange}
-                                value={settings.account.url}
-                                disabled={settings.account.server === "github"}
-                                fullWidth
-                                margin="normal"
-                            />
-                            <TextField
-                                label="Github Personal Access Token"
-                                placeholder="Personal Access Token"
-                                onChange={this.handleAccountTokenChange}
-                                value={settings.account.token}
-                                fullWidth
-                                margin="normal"
-                            />
-                        </form>
+                        <TextField
+                            select
+                            label="Github Server"
+                            value={this.state.account.server}
+                            onChange={this.handleAccountServerChange}
+                            fullWidth
+                            margin="normal"
+                        >
+                            <MenuItem value="github">api.github.com</MenuItem>
+                            <MenuItem value="enterprise">Github Enterprise</MenuItem>
+                        </TextField>
+                        <TextField
+                            label="Github Enterprise URL"
+                            placeholder="http://your.domain/v3/"
+                            onChange={this.handleAccountUrlChange}
+                            value={this.state.account.url}
+                            disabled={this.state.account.server === "github"}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <TextField
+                            label="Github Personal Access Token"
+                            placeholder="Personal Access Token"
+                            onChange={this.handleAccountTokenChange}
+                            value={this.state.account.token}
+                            fullWidth
+                            margin="normal"
+                        />
                     </DialogContent>
                     <DialogActions>
                         {
                             session && session.user && session.user.login ? (
                                 <Button color="secondary" onClick={this.handleAccountDialogLogout}>Logout</Button>
                             ) : (
-                                <Button color="primary" keyboardFocused onClick={this.handleAccountDialogSubmit}>Login</Button>
+                                <Button color="primary" onClick={this.handleAccountDialogSubmit}>Login</Button>
                             )
                         }
                         <Button onClick={this.handleAccountDialogClose}>Cancel</Button>

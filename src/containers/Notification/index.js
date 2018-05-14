@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { bindActionCreators } from "redux";
@@ -15,6 +14,7 @@ class Notification extends Component {
                     <div>
                         <Dialog
                             open={(notification.status === STATUS_ERROR)}
+                            fullWidth
                             modal={false}
                             onClose={() => {actions.notifyMessage({status: STATUS_CLEAR})}}
                         >
@@ -25,7 +25,9 @@ class Notification extends Component {
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
-                                <Button label="Close" color="primary" onClick={() => {actions.notifyMessage({status: STATUS_CLEAR})}} autoFocus/>
+                                <Button color="primary" onClick={() => {actions.notifyMessage({status: STATUS_CLEAR})}} autoFocus>
+                                    Close
+                                </Button>
                             </DialogActions>
                         </Dialog>
                         <Snackbar
@@ -40,13 +42,6 @@ class Notification extends Component {
         )
     }
 }
-
-Notification.propTypes = {
-    notification: PropTypes.object,
-    actions: PropTypes.shape({
-        notifyMessage: PropTypes.func
-    })
-};
 
 const mapStateToProps = (state, ownProps) => ({
     notification: state.notification,
